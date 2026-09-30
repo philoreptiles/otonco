@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <title>Dashboard - Escama y Colmillo</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../styles/pages/admin.css">
+    <link rel="stylesheet" href="../../styles/pages/dashboard.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-container">
+            <a href="/index.html" class="logo-link">
+                <span class="brand-title" id="brand-title-text">ESCAMA Y COLMILLO</span>
+            </a>
+            <nav class="nav-menu">
+                <a href="/index.html" class="nav-link">Ejemplares</a>
+                <a href="/src/pages/admin/admin.html" class="nav-link">Control</a>
+                <a href="/src/pages/dashboard/dashboard.html" class="nav-link nav-link--active">Dashboard</a>
+                <div id="auth-header-action"></div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-main">
+
+        <div class="dashboard-header">
+            <h1>Dashboard</h1>
+            <p>Resumen ejecutivo de tu criadero.</p>
+        </div>
+
+        <!-- KPIs principales -->
+        <section class="kpi-grid" id="kpi-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));">
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Ejemplares Totales</span>
+                <h3 class="kpi-value" id="kpi-total-ejemplares">0</h3>
+                <span class="kpi-subtext" id="kpi-disponibles-sub">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Valor del Inventario</span>
+                <h3 class="kpi-value" id="kpi-valor-inventario">$0.00</h3>
+                <span class="kpi-subtext" id="kpi-valor-sub">Cargando...</span>
+            </article>
+                <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Ticket Promedio</span>
+                <h3 class="kpi-value" id="kpi-ticket-promedio">$0.00</h3>
+                <span class="kpi-subtext" id="kpi-ticket-sub">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Valor en Apartado</span>
+                <h3 class="kpi-value" id="kpi-valor-apartado">$0.00</h3>
+                <span class="kpi-subtext" id="kpi-apartado-sub">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Ventas Totales</span>
+                <h3 class="kpi-value" id="kpi-ventas-totales">$0.00</h3>
+                <span class="kpi-subtext" id="kpi-ventas-sub">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Especie Principal</span>
+                <h3 class="kpi-value" id="kpi-top-especie">---</h3>
+                <span class="kpi-subtext" id="kpi-top-especie-count">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Antigüedad del Inventario</span>
+                <h3 class="kpi-value" id="kpi-antiguedad-promedio">---</h3>
+                <span class="kpi-subtext" id="kpi-antiguedad-sub">Cargando...</span>
+            </article>
+            <article class="kpi-card">
+                <span class="kpi-label"><svg class="kpi-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Holdbacks</span>
+                <h3 class="kpi-value" id="kpi-holdback-count">0</h3>
+                <span class="kpi-subtext" id="kpi-holdback-sub">Cargando...</span>
+            </article>
+        </section>
+
+        <!-- Bloque 1: Distribuciones -->
+        <section class="dash-grid-2">
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Estatus del inventario</h2>
+                </summary>
+                <div class="insight-body">
+                    <div class="pie-chart-container" id="status-bar-list">
+                        <p class="dash-loading">Cargando...</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Distribución por sexo</h2>
+                </summary>
+                <div class="insight-body">
+                    <div class="pie-chart-container" id="sexo-bar-list">
+                        <p class="dash-loading">Cargando...</p>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Bloque 2: resto de analíticas. MISMA sección que la de
+                 arriba a propósito -- el gap del grid solo separa
+                 parejo elementos que están DENTRO del mismo
+                 contenedor. Si esto se vuelve a partir en dos
+                 <section class="dash-grid-2">, la costura entre la
+                 última ficha de una y la primera de la otra se ve
+                 distinta al resto sin importar qué gap se le ponga
+                 al CSS. -->
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Distribución por etapa</h2>
+                </summary>
+                <div class="insight-body">
+                    <div class="bar-list" id="etapa-bar-list">
+                        <p class="dash-loading">Cargando...</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Ejemplares por año de nacimiento</h2>
+                </summary>
+                <div class="insight-body">
+                    <div class="year-chart" id="year-chart">
+                        <p class="dash-loading">Cargando...</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Especies con mayor presencia</h2>
+                </summary>
+                <div class="insight-body">
+                    <div class="bar-list" id="especies-bar-list">
+                        <p class="dash-loading">Cargando...</p>
+                    </div>
+                </div>
+            </details>
+
+            <details class="premium-card insight-details">
+                <summary class="insight-summary">
+                    <h2 class="card-title">Alertas y sugerencias</h2>
+                    <span class="insight-count-badge hidden" id="insight-count-badge">0</span>
+                </summary>
+                <div class="insight-list" id="insight-list">
+                    <p class="dash-loading">Cargando...</p>
+                </div>
+            </details>
+        </section>
+
+    </main>
+
+    <script type="module" src="./dashboard-view.js"></script>
+</body>
+</html>

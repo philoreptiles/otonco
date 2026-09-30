@@ -1,0 +1,326 @@
+/* ============================================================
+   FEATURED — Hero Banner
+   La imagen del ejemplar ocupa todo el fondo de la tarjeta con un
+   degradado oscuro encima para garantizar legibilidad. El contenido
+   (especie, genética, precio, CTA) vive en la parte inferior.
+   ============================================================ */
+
+.featured-section {
+    padding: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* ---------- Tarjeta principal ---------- */
+.featured-hero {
+    position: relative;
+    width: 100%;
+    min-height: 360px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    isolation: isolate; /* contiene el z-index interno */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featured-hero:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.55);
+}
+
+/* Imagen de fondo */
+.featured-hero-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: -2;
+    transition: transform 0.6s ease;
+    /* Zoom lento y continuo -- casi imperceptible cuadro a cuadro,
+       pero le da vida a una foto estática que si no se queda
+       completamente quieta. Se pausa en hover (ver regla de abajo)
+       para dejarle el paso al scale(1.05) más rápido que ya existía,
+       y retoma justo donde iba al quitar el mouse. */
+    animation: kenBurnsZoom 14s ease-in-out infinite;
+}
+
+@keyframes kenBurnsZoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+.featured-hero:hover .featured-hero-bg {
+    animation-play-state: paused;
+    transform: scale(1.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .featured-hero-bg {
+        animation: none;
+    }
+}
+
+/* Overlay degradado: oscuro abajo, transparente arriba */
+.featured-hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.94) 0%,
+        rgba(0, 0, 0, 0.65) 40%,
+        rgba(0, 0, 0, 0.15) 75%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    pointer-events: none;
+}
+
+/* ---------- Slides del carrusel ----------
+   CAMBIO (carrusel de 3 destacados): cada .featured-slide ocupa TODO
+   el espacio de .featured-hero (mismo min-height ya definido arriba),
+   apiladas una encima de otra. Solo la que tiene .featured-slide--active
+   es visible -- featured.js le agrega/quita esa clase cada 3s. opacity
+   en vez de display:none para poder animar el cruce con transition en
+   vez de un corte seco, y pointer-events: none en las inactivas para
+   que no se puedan clickear ni tabular por accidente mientras están
+   ocultas. isolation: isolate repite el mismo truco que ya usa
+   .featured-hero para que los z-index negativos de .featured-hero-bg/
+   overlay de CADA slide se contengan dentro de su propia slide, sin
+   pelearse entre sí en la pila global. */
+.featured-slide {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    isolation: isolate;
+    transition: opacity 0.6s ease;
+}
+
+.featured-slide--active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Los dots de navegación ahora viven dentro de .featured-hero-actions,
+   junto al botón de WhatsApp (ver más abajo) -- ya no están
+   posicionados en la esquina superior. */
+
+
+/* ---------- Badges superiores ---------- */
+.featured-hero-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(10, 10, 10, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    padding: 0.35rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.featured-hero-badge svg {
+    width: 14px;
+    height: 14px;
+}
+
+.featured-hero-status {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Colores de estatus (los que me pasaste) */
+.status-disponible { background-color: var(--status-disponible, #2E7D32); }
+.status-apartado   { background-color: var(--primary-color); }
+.status-vendido    { background-color: var(--status-vendido, #D32F2F); }
+.status-holdback   { background-color: var(--moonstone-color); }
+
+/* ---------- Contenido inferior ---------- */
+.featured-hero-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 1.5rem;
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.featured-hero-species {
+    display: block;
+    font-family: var(--font-primary);
+    font-style: italic;
+    font-size: 0.9rem;
+    opacity: 0.85;
+    color: #ffffff;
+}
+
+.featured-hero-genetics {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0.1rem 0 0.3rem 0;
+    line-height: 1.1;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.featured-hero-details {
+    font-size: 0.9rem;
+    opacity: 0.82;
+    margin: 0 0 0.9rem 0;
+    color: #ffffff;
+}
+
+/* ---------- Fila inferior: precio + acciones (botón + dots) ---------- */
+.featured-hero-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.featured-hero-price {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    line-height: 1;
+}
+
+/* CAMBIO: agrupa el botón de WhatsApp y los dots del carrusel para
+   que se muevan y envuelvan (flex-wrap) juntos como una sola unidad
+   frente al precio, en vez de que cada uno decida su lugar por su
+   cuenta. flex-shrink: 0 evita que el precio (que puede variar mucho
+   en longitud) los empuje y los comprima. */
+.featured-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.featured-hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #25D366;
+    color: #ffffff;
+    padding: 0.55rem 0.95rem;
+    border-radius: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.featured-hero-btn:hover {
+    background: #1EBE5A;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(37, 211, 102, 0.5);
+}
+
+.featured-hero-btn svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* CAMBIO (dots junto al botón, ya no arriba): fila horizontal
+   compacta, sin position: absolute -- ahora es un simple hijo flex
+   más de .featured-hero-actions. Se repite (idéntica) dentro del
+   footer de CADA slide -- solo se ve la copia de la slide activa,
+   las otras dos heredan opacity: 0/pointer-events: none de su
+   .featured-slide padre (ver featured.css arriba), así que nunca hay
+   dots duplicados clickeables encimados. featured.js sincroniza el
+   estado --active de las 3 copias de cada índice a la vez. */
+.featured-hero-dots {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.featured-hero-dot {
+    width: 17px;
+    height: 17px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.featured-hero-dot:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.featured-hero-dot--active {
+    background: #ffffff;
+    transform: scale(1.3);
+}
+
+/* ---------- Desktop ---------- */
+@media (min-width: 768px) {
+    .featured-section {
+        padding: 1.5rem;
+    }
+
+    .featured-hero {
+        min-height: 420px;
+        border-radius: 8px;
+    }
+
+    .featured-hero-content {
+        padding: 2.5rem;
+    }
+
+    .featured-hero-genetics {
+        font-size: 2.5rem;
+        max-width: 70%;
+    }
+
+    .featured-hero-details {
+        font-size: 1rem;
+    }
+
+    .featured-hero-price {
+        font-size: 2rem;
+    }
+
+    .featured-hero-btn {
+        padding: 0.65rem 1.25rem;
+        font-size: 0.88rem;
+    }
+
+    .featured-hero-dot {
+        width: 18px;
+        height: 18px;
+    }
+}

@@ -1,0 +1,244 @@
+/* ============================================================
+   METODOLOGÍA MOBILE-FIRST
+   Base = móvil pequeño (< 400px). Dos bloques @media
+   (min-width: 400px) y (min-width: 768px) van ampliando
+   tamaños y espaciados; los :hover viven solo en el bloque
+   de escritorio (>= 768px), para no quedar "pegados" tras
+   un toque en pantallas táctiles. No existen @media
+   (max-width: ...) en este archivo.
+   ============================================================ */
+.card {
+    background-color: var(--card-bg, #282B2B);
+    border: 1px solid var(--border-color, #3D4242);
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Entrada en cascada AL HACER SCROLL: catalog.js observa cada card con
+   IntersectionObserver y le agrega ".is-visible" la primera vez que
+   entra al viewport (mismo patrón que .reveal-on-scroll en
+   nosotros.css). Antes la animación arrancaba apenas se insertaba la
+   card en el DOM (vía @keyframes + animation-delay) -- para las cards
+   fuera de la pantalla inicial (fila 3, 4...), la animación ya había
+   terminado de sobra antes de que el visitante llegara a verlas con
+   scroll, así que el efecto solo se notaba en las primeras 2 filas. */
+.card.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card.reveal-on-scroll {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
+
+.card-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+    background-color: var(--jet-dark, #1E2020);
+    /* Se ve mientras la foto real (con loading="lazy" + paginación)
+       todavía no termina de descargar. Es un ícono de cámara con
+       stroke='currentColor', así que hereda el color de --moonstone-color
+       (ver la línea "color:" abajo) -- si un criador nuevo cambia su
+       paleta en site-config.js, este ícono cambia solo, sin tocar el CSS.
+       MISMO ícono (mismas proporciones) que el placeholder de "sin
+       imagen" que genera src/utils/security.js (PLACEHOLDER_IMG) --
+       aquí va repetido como fondo CSS estático en vez de referenciado
+       desde JS a propósito: así el navegador lo cachea junto con la
+       hoja de estilos una sola vez, en lugar de insertarlo inline en
+       cada tarjeta del catálogo. Si se ajusta el ícono, actualizar
+       también security.js para que no se desalineen los dos. */
+    color: var(--moonstone-color, #7AA6B3);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect x='120' y='105' width='160' height='110' rx='14' fill='none' stroke='currentColor' stroke-width='7'/%3E%3Crect x='172' y='82' width='56' height='26' rx='6' fill='none' stroke='currentColor' stroke-width='7'/%3E%3Ccircle cx='200' cy='160' r='34' fill='none' stroke='currentColor' stroke-width='7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 46% auto;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.status-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 10 !important;
+    padding: 0.15rem 0.4rem;
+    border-radius: 8px;
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    pointer-events: none;
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.status-icon {
+    width: 0.85em;
+    height: 0.85em;
+    flex-shrink: 0;
+}
+
+.status-disponible { background-color: var(--status-disponible, #2E7D32); }
+.status-apartado { background-color: var(--primary-color); }
+.status-vendido { background-color: var(--status-vendido, #D32F2F); }
+.status-holdback { background-color: var(--moonstone-color); }
+
+/* Pulso muy sutil solo en "Disponible" -- es el estatus que le
+   interesa notar primero a un comprador, así que se le da un guiño
+   de vida sin volverlo molesto (escala de sombra, no de tamaño, para
+   no mover el layout de la card). */
+@keyframes statusPulse {
+    0%, 100% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 0 rgba(46, 125, 50, 0.55); }
+    50% { box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 5px rgba(46, 125, 50, 0); }
+}
+
+.status-disponible {
+    animation: statusPulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .status-disponible {
+        animation: none;
+    }
+}
+
+.card-content {
+    padding: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+}
+
+.card-species {
+    font-family: var(--font-primary, serif);
+    font-style: italic;
+    font-size: 0.68rem;
+    color: var(--moonstone-color, #7AA6B3);
+}
+
+.card-genetics {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--text-light, #F4F5F5);
+    margin: 0;
+    line-height: 1.15;
+}
+
+.card-details {
+    font-size: 0.6rem;
+    color: #A0A5A5;
+    margin-top: 0.1rem;
+}
+
+.card-price {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary-color, #EE6C29);
+    margin-top: auto;
+    padding-top: 0.2rem;
+}
+
+/* --- Móvil estándar (>= 400px) --- */
+@media (min-width: 400px) {
+    .card-image-wrapper {
+        height: 120px;
+    }
+
+    .card-content {
+        padding: 0.5rem;
+    }
+
+    .card-genetics {
+        font-size: 0.88rem;
+    }
+
+    .card-details {
+        font-size: 0.65rem;
+    }
+
+    .card-price {
+        font-size: 0.92rem;
+    }
+}
+
+/* --- Tablet y escritorio (>= 768px) --- */
+@media (min-width: 768px) {
+    .card {
+        border-radius: 12px;
+    }
+
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+        border-color: var(--moonstone-color, #7AA6B3);
+    }
+
+    .card:hover .card-image {
+        transform: scale(1.05);
+    }
+
+    .card-image-wrapper {
+        height: 220px;
+    }
+
+    .status-badge {
+        top: 8px;
+        right: 8px;
+        padding: 0.3rem 0.7rem;
+        font-size: 0.72rem;
+        border-radius: 8px;
+    }
+
+    .card-content {
+        padding: 1.25rem;
+        gap: 0.35rem;
+    }
+
+    .card-species {
+        font-size: 0.95rem;
+    }
+
+    .card-genetics {
+        font-size: 1.4rem;
+        line-height: 1.2;
+    }
+
+    .card-details {
+        font-size: 0.88rem;
+    }
+
+    .card-price {
+        font-size: 1.5rem;
+        padding-top: 0.1rem;
+    }
+}

@@ -1,0 +1,162 @@
+﻿@import './base/reset.css';
+@import './base/typography.css';
+@import './layouts/layout.css';
+@import '../components/common/header/header.css';
+@import '../components/common/hero/hero.css';
+@import '../components/common/footer/footer.css';
+@import '../components/common/card/card.css';
+@import '../components/ui/featured/featured.css';
+@import '../components/ui/filters/filters.css';
+@import '../components/ui/catalog/catalog.css';
+@import '../components/ui/modal/modal.css';
+
+:root {
+    /* Le dice al navegador que TODO el "chrome" nativo de la página
+       (el menú emergente de un <select>, la casilla de un checkbox,
+       la barra de scroll, el selector de fecha de un <input
+       type="date">) debe pintarse en su variante oscura en vez de la
+       clara por default del sistema operativo. Es soportado por
+       Chrome/Edge/Firefox/Safari actuales -- incluidas sus versiones
+       para Android/iOS -- y es la única forma real de que el menú
+       desplegable de un <select> deje de verse blanco: ese menú lo
+       dibuja el sistema operativo, no la página, así que no hay
+       "background: #181A1A" de CSS que lo alcance. */
+    color-scheme: dark;
+
+    /* --primary-color, --moonstone-color, --bg-color/--jet-dark y las
+       2 variables de fuente de más abajo son SOBRESCRITAS en tiempo
+       de carga por applySiteTheme() (ver src/site-config.js y
+       main.js) con los valores del cliente activo. Lo que queda
+       aquí es solo el fallback antes de que corra ese JS -- para
+       cambiar la paleta de un cliente, edita site-config.js, NO
+       este archivo. */
+    --primary-color: #ee296e;
+    --primary-hover: color-mix(in srgb, var(--primary-color) 82%, black);
+    --jet-color: #282B2B;
+    --jet-dark: #1E2020;
+    --jet-card: #282B2B;
+    --moonstone-color: #7AA6B3;
+    --moonstone-hover: color-mix(in srgb, var(--moonstone-color) 82%, black);
+    
+    --bg-color: #1E2020;
+    --card-bg: #282B2B;
+    --text-light: #F4F5F5;
+    --text-dark: #282B2B;
+    --border-color: #3D4242;
+    
+    /* "Apartado" y "Holdback" NO tienen su propia variable de color a
+       propósito -- en card.css y modal.css usan var(--primary-color) y
+       var(--moonstone-color) directamente, así que siguen la paleta del
+       cliente solos. "Disponible" y "Vendido" SÍ son un semáforo fijo
+       (verde/rojo) que NO cambia por cliente -- ver dashboard-view.js,
+       mismo criterio ahí para las gráficas. */
+    --status-disponible: #2E7D32;
+    --status-vendido: #D32F2F;
+    
+    /* Fallback -- el valor real lo pone site-config.js (fonts.heading/body).
+       Genérico a propósito (no es la fuente de ningún cliente en
+       particular): solo se ve un instante mientras carga la fuente real
+       desde Google Fonts. */
+    --font-primary: Georgia, 'Times New Roman', serif;
+    --font-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.35);
+    --shadow-sticky: 0 8px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Refuerzo para los navegadores de escritorio que sí pintan el
+   <option> con el CSS de la página (Firefox, y Chrome/Edge en
+   ciertas versiones) -- en el resto (la mayoría de los navegadores
+   móviles), el menú nativo ya se resuelve solo gracias al
+   "color-scheme: dark" del :root de arriba. */
+select option {
+    background-color: #181A1A;
+    color: #F4F5F5;
+}
+
+body {
+    background-color: var(--bg-color);
+    /* Textura sutil: antes era un gris plano. Un gradiente radial muy
+       tenue -- 6% del color de marca, apagándose a los 2/3 de la
+       pantalla -- le da profundidad sin volverse un fondo "diseñado"
+       que compita con las fotos de los ejemplares. Usa color-mix()
+       (mismo truco que ya usa hero.css) para que se adapte solo a la
+       paleta de cada cliente, sin tocar este archivo.
+       background-attachment: fixed evita que el gradiente se
+       "repita" visualmente al hacer scroll en páginas largas. */
+    background-image: radial-gradient(
+        circle at 50% 0%,
+        color-mix(in srgb, var(--primary-color) 6%, var(--bg-color)) 0%,
+        var(--bg-color) 65%
+    );
+    background-attachment: fixed;
+    color: var(--text-light);
+    font-family: var(--font-secondary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scrollbar a la medida del tema -- Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--moonstone-color) var(--jet-dark);
+}
+
+/* Scrollbar a la medida del tema -- Chrome/Edge/Safari */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--jet-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--moonstone-color);
+    border-radius: 20px;
+    border: 2px solid var(--jet-dark);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-color);
+}
+
+/* Selección de texto con el color de marca en vez del azul por
+   default del navegador -- detalle mínimo, prácticamente nadie lo
+   personaliza, así que se nota. */
+::selection {
+    background-color: var(--primary-color);
+    color: #ffffff;
+}
+
+/* Barra de progreso superior (ver src/utils/progress-bar.js) --
+   fija arriba de TODA la página, por encima incluso del modal
+   (z-index más alto que el overlay), para que se note el cambio de
+   filtro o la carga de una página nueva sin importar qué esté
+   abierto en ese momento. */
+.top-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background-color: var(--primary-color);
+    z-index: 5000;
+    opacity: 0;
+    transition: width 0.3s ease, opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.top-progress-bar.is-loading {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .top-progress-bar {
+        transition: opacity 0.2s ease;
+    }
+}

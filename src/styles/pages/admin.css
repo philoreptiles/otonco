@@ -1,0 +1,1654 @@
+﻿/* Las variables de color y fuente (--primary-color, --jet-dark,
+   --moonstone-color, --border-color, --text-light, --font-primary,
+   --font-secondary, etc.) ya NO se definen aquí -- admin.html carga
+   main.css antes que este archivo, así que las hereda por cascada
+   desde ahí. Esas, a su vez, las llena site-config.js en tiempo de
+   carga (ver applySiteTheme() en admin-view.js). Solo se queda aquí
+   --text-muted porque es específica de este panel y no tiene
+   equivalente en el esquema canónico. */
+:root {
+    --text-muted: #A0AAB0;
+}
+
+/* ============================================================
+   METODOLOGÍA MOBILE-FIRST
+   ------------------------------------------------------------
+   Todo lo que está FUERA de un bloque @media es el diseño base
+   para celular (< 768px): layouts de 1 columna, anchos fluidos
+   (100% + max-width), espaciados compactos (1-1.5rem) y títulos
+   entre 1.4rem y 1.8rem. Al final del archivo hay UN SOLO bloque
+   @media (min-width: 768px) que amplía columnas, aire y tipografía
+   para tablet/escritorio, y agrega los efectos :hover (en táctil
+   no tienen sentido y pueden quedarse "pegados" tras un toque).
+   No existen @media (max-width: ...) en este archivo.
+
+   Excepciones deliberadas a "1 columna" en el base móvil, con su
+   razón anotada en el lugar donde aparecen:
+   - .table-premium mantiene scroll horizontal en vez de apilarse:
+     una tabla de datos (precio, año, estatus...) pierde su
+     significado si se apila en tarjetas; el scroll horizontal
+     dentro de su propio contenedor es el patrón mobile-first
+     aceptado para tablas de datos densas.
+   ============================================================ */
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-light);
+    font-family: var(--font-secondary);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+/* ==================== HEADER ==================== */
+.header {
+    background-color: var(--jet-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0.85rem 1rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.logo-link {
+    text-decoration: none;
+}
+
+.brand-title {
+    color: var(--primary-color);
+    font-family: var(--font-primary);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.nav-menu {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nav-link {
+    color: var(--text-light);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+}
+
+/* Botón activo del encabezado compartido (admin.html / dashboard.html):
+   indica en cuál de las 3 secciones (Ejemplares / Control / Dashboard)
+   está parado el criador. Ejemplares no puede llevar este estado porque
+   es un enlace externo al catálogo público, fuera de este layout. */
+.nav-link--active {
+    color: var(--primary-color);
+    background: rgba(238, 108, 41, 0.12);
+}
+
+/* ==================== LAYOUT PRINCIPAL ==================== */
+.admin-main {
+    width: 100%;
+    max-width: 1200px;
+    margin: 1.25rem auto;
+    padding: 0 1rem 2.5rem;
+    box-sizing: border-box;
+}
+
+.dashboard-header {
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-header h1 {
+    font-family: var(--font-primary);
+    font-size: 1.6rem;
+    color: var(--text-light);
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.dashboard-header p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* ==================== TARJETAS ==================== */
+.premium-card {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--jet-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+.card-title {
+    font-family: var(--font-primary);
+    font-size: 1.25rem;
+    color: var(--text-light);
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+/* ==================== FORMULARIOS (genérico) ==================== */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-grid-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+.form-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group-premium {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* Permite que un campo o cuadro de texto abarque todo el ancho */
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+.form-group-premium label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-group-premium input[type="text"],
+.form-group-premium input[type="number"],
+.form-group-premium input[type="email"],
+.form-group-premium input[type="password"],
+.form-group-premium select,
+.form-group-premium textarea {
+    background: #181A1A;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text-light);
+    font-size: 0.95rem;
+    font-family: var(--font-secondary);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Control de dimensiones para el cuadro de Genética / Morfos */
+.form-group-premium textarea {
+    min-height: 80px;
+    max-height: 160px;
+    resize: vertical;
+}
+
+.form-group-premium input:focus,
+.form-group-premium select:focus,
+.form-group-premium textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(238, 108, 41, 0.2);
+}
+
+.form-group-premium select option {
+    background: #181A1A;
+    color: var(--text-light);
+}
+
+/* Eliminar flechas en inputs number */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* ==================== FORMULARIO "AGREGAR EJEMPLAR" ==================== */
+/* CAMBIO: más compacto en móvil (que es la base de este archivo -- ver
+   nota al inicio, "no existen @media max-width"). Los valores previos
+   ya recortaban algo, pero seguía sintiéndose largo en un celular; se
+   redujo padding/gaps/tamaños de fuente en toda la tarjeta, cuidando
+   que los campos e inputs no bajen de ~38-40px de alto (el mínimo
+   razonable para tocar con el dedo sin fallar). El bloque
+   @media (min-width: 768px) de más abajo (línea ~1274) vuelve a
+   ampliar todo esto para pantallas grandes, sin necesidad de tocarlo. */
+.premium-card:has(#add-ejemplar-form) {
+    padding: 0.85rem 0.75rem;
+}
+
+.premium-card:has(#add-ejemplar-form) .card-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+
+#add-ejemplar-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+    align-items: start;
+}
+
+#add-ejemplar-form .form-column {
+    display: contents;
+}
+
+#add-ejemplar-form .form-group-premium {
+    gap: 0.2rem;
+}
+
+#add-ejemplar-form .form-group-premium label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3px;
+}
+
+#add-ejemplar-form input[type="text"],
+#add-ejemplar-form input[type="number"],
+#add-ejemplar-form select {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.87rem;
+    min-height: 38px;
+    box-sizing: border-box;
+}
+
+#add-ejemplar-form textarea {
+    min-height: 56px;
+}
+
+#add-ejemplar-form .drop-zone {
+    padding: 0.5rem 0.7rem;
+    min-height: 40px;
+}
+
+#add-ejemplar-form .drop-text {
+    font-size: 0.76rem;
+}
+
+#add-ejemplar-form .preview-container {
+    padding: 0.4rem 0.6rem;
+    margin-top: 0.25rem;
+    gap: 0.6rem;
+}
+
+#add-ejemplar-form .preview-thumb {
+    width: 36px;
+    height: 36px;
+}
+
+#add-ejemplar-form .form-actions-full {
+    grid-column: 1 / -1;
+    margin-top: 0.25rem;
+}
+
+#add-ejemplar-form .form-actions-full .btn-premium {
+    width: 100%;
+    padding: 0.7rem 1.1rem;
+    font-size: 0.92rem;
+}
+
+/* ==================== CARGA DE ARCHIVOS (drop zone genérica) ==================== */
+.drop-zone {
+    position: relative;
+    border: 2px dashed var(--border-color);
+    border-radius: 10px;
+    background: #181A1A;
+    padding: 1.25rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 64px;
+}
+
+.drop-zone.dragover {
+    border-color: var(--primary-color);
+    background: rgba(238, 108, 41, 0.08);
+}
+
+.drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.drop-text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.preview-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    background: #181A1A;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.preview-thumb {
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+}
+
+.btn-change-img {
+    background: #333737;
+    color: var(--text-light);
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.form-actions-full {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+}
+
+/* ==================== BOTONES ==================== */
+.btn-premium {
+    background: var(--primary-color);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-premium:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary-premium {
+    background: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* ==================== FILTROS DE INVENTARIO ==================== */
+.premium-card:has(.filter-grid-premium) {
+    padding: 0.85rem 0.75rem;
+}
+
+.premium-card:has(.filter-grid-premium) .card-title {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+}
+
+.filter-grid-premium {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+}
+
+.filter-grid-premium .form-group-premium {
+    gap: 0.2rem;
+}
+
+.filter-grid-premium .form-group-premium label {
+    font-size: 0.7rem;
+}
+
+.filter-grid-premium input,
+.filter-grid-premium select {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.87rem;
+    min-height: 38px;
+    box-sizing: border-box;
+}
+
+.filter-actions-right {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
+
+.filter-actions-right .btn-premium,
+.filter-actions-right .btn-secondary-premium {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.87rem;
+}
+
+/* Contenedor del botón Ver Todos / Mostrar Menos */
+.inventory-toggle-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+.inventory-toggle-container .btn-secondary-premium:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--border-color);
+    background: transparent;
+}
+
+/* ==================== TABLAS ====================
+   Ver nota de excepción "1 columna" al inicio del archivo: la tabla
+   conserva scroll horizontal en vez de apilarse en el base móvil.
+
+   CAMBIO (contenedor con altura máxima): antes .table-container-premium
+   solo tenía overflow-x, así que con "Ver todos" (más de 5 filas) la
+   tabla crecía tan alta que su propia barra de scroll horizontal
+   quedaba dibujada hasta el final físico del contenedor -- muy por
+   debajo de lo que se alcanza a ver en pantalla, imposible de agarrar
+   sin primero bajar hasta el fondo. Con max-height + overflow-y, el
+   contenedor deja de crecer sin límite: su scroll (horizontal Y
+   vertical) siempre queda pegado al bloque visible, sin importar
+   cuántas filas haya. Como consecuencia natural de agregar scroll
+   vertical, el thead ahora es sticky (top: 0) para que los encabezados
+   de columna no desaparezcan al bajar dentro de la tabla. */
+.table-container-premium {
+    width: 100%;
+    max-height: 60vh;
+    overflow-x: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: #181A1A;
+    position: relative;
+}
+
+.table-premium {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+.table-premium th {
+    background: #141616;
+    color: var(--text-muted);
+    padding: 0.75rem 0.85rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.table-premium td {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid #282B2B;
+    vertical-align: middle;
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+/* CAMBIO (columna ID fija al hacer scroll horizontal): sticky left
+   sobre la primera columna para que el ID del ejemplar siga visible
+   sin importar cuánto se deslice la tabla hacia la derecha. Necesita
+   un background SÓLIDO explícito (no lo hereda del <td> normal,
+   transparente) porque un elemento sticky se queda dibujado ENCIMA
+   del resto de columnas al desplazarse -- sin fondo opaco se vería el
+   texto de las demás celdas transparentándose debajo. z-index más
+   alto que el resto de <td> (que no lo necesitan, viven en flujo
+   normal) pero más bajo que el encabezado (también sticky, top+left
+   a la vez en esta columna, por eso necesita ganarle a todo lo demás).
+   El border-right marca visualmente dónde termina la columna fija. */
+.table-premium td[data-col="id"] {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: #181A1A;
+    border-right: 1px solid var(--border-color);
+}
+
+.table-premium th[data-col="id"] {
+    left: 0;
+    z-index: 3;
+    border-right: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sticky);
+}
+
+/* CAMBIO (fila coloreada al hacer clic): .row-selected la agrega/quita
+   admin-view.js en cada <tr> al hacer clic (ver renderTableRows()).
+   color-mix() con --primary-color en vez de un rosa fijo para que el
+   tono siga la paleta de marca de cada criador (mismo patrón que ya
+   usa main.css para el gradiente de fondo del body), mezclado sobre
+   el fondo oscuro de la tabla para quedar "tenue" y no un rosa plano
+   saturado. Se repite el mismo fondo explícito sobre la celda de ID
+   fija -- si no, su background sólido (#181A1A de la regla de arriba)
+   taparía el color de selección de esa columna en particular. */
+.table-premium tbody tr.row-selected {
+    background-color: color-mix(in srgb, var(--primary-color) 15%, #181A1A);
+    cursor: pointer;
+}
+
+.table-premium tbody tr.row-selected td[data-col="id"] {
+    background-color: color-mix(in srgb, var(--primary-color) 15%, #181A1A);
+}
+
+.table-premium tbody tr {
+    cursor: pointer;
+}
+
+.table-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    display: block;
+}
+
+/* Badges de Estatus
+   NOTA: .status-badge y sus variantes también existen en card.css (para el
+   overlay de las tarjetas del catálogo público) con "position: absolute".
+   Como card.css se importa globalmente vía main.css, esas reglas también
+   llegan a esta página. Aquí las escopamos bajo ".table-premium" para que
+   ganen siempre por especificidad, y reseteamos explícitamente "position"
+   y demás propiedades de posicionamiento absoluto para que el badge se
+   quede dentro de la celda de la tabla en vez de salir del flujo normal. */
+.table-premium .status-badge {
+    position: static;
+    top: auto;
+    right: auto;
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    box-shadow: none;
+}
+
+.table-premium .status-disponible {
+    background: rgba(46, 125, 50, 0.2);
+    color: #4CAF50;
+    border: 1px solid rgba(76, 175, 80, 0.4);
+}
+
+.table-premium .status-apartado {
+    background: rgba(238, 108, 41, 0.2);
+    color: var(--primary-color);
+    border: 1px solid rgba(238, 108, 41, 0.4);
+}
+
+.table-premium .status-vendido {
+    background: rgba(211, 47, 47, 0.2);
+    color: #EF5350;
+    border: 1px solid rgba(239, 83, 80, 0.4);
+}
+
+.table-premium .status-holdback {
+    background: rgba(122, 166, 179, 0.2);
+    color: var(--moonstone-color);
+    border: 1px solid rgba(122, 166, 179, 0.4);
+}
+
+/* Botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-icon {
+    background: #282B2B;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-edit-icon {
+    color: var(--moonstone-color);
+}
+
+.btn-delete-icon {
+    color: #EF5350;
+}
+
+/* ==================== ENCABEZADO DE SECCIÓN + COLUMNAS ==================== */
+.inventory-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.columnas-config {
+    position: relative;
+}
+
+.columnas-panel {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    z-index: 40;
+    width: 220px;
+    background: #181A1A;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.columnas-panel-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    margin: 0 0 0.5rem 0;
+}
+
+.columna-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.columna-check input {
+    width: auto;
+}
+
+/* ==================== BÚSQUEDA UNIFICADA ==================== */
+.unified-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--jet-dark, #1E2020);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.65rem 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+.unified-search-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+}
+
+.unified-search-bar input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    min-width: 0;
+}
+
+.unified-search-bar input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-results-count {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* ==================== VISTAS GUARDADAS ==================== */
+.saved-views-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px dashed var(--border-color);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.saved-views-select-group,
+.saved-views-save-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.saved-views-select-group label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.saved-views-select-group select {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    background: var(--jet-dark, #1E2020);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.saved-views-save-group input[type="text"] {
+    flex: 1;
+    min-width: 160px;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    background: var(--jet-dark, #1E2020);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.saved-view-default-check {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.saved-view-default-check input {
+    width: auto;
+}
+
+.saved-views-save-group .btn-secondary-premium {
+    white-space: nowrap;
+}
+
+/* ==================== MODAL DE EDICIÓN ==================== */
+.edit-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    background: rgba(10, 12, 12, 0.82);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+.edit-modal-overlay.is-open {
+    display: flex !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.edit-modal {
+    width: 100%;
+    max-width: 780px;
+    max-height: 96vh;
+    overflow-y: auto;
+    background: var(--jet-card);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-sizing: border-box;
+}
+
+.edit-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* ==================== MODAL DE CONFIRMACIÓN ====================
+   Reemplaza confirm()/window.confirm(). Mismo criterio visual que
+   .edit-modal-overlay/.edit-modal (overlay oscuro + caja centrada
+   con --jet-card), pero más angosto y sin scroll -- es una pregunta
+   de sí/no, no un formulario. */
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(10, 12, 12, 0.82);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+}
+
+.confirm-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.confirm-box {
+    width: 100%;
+    max-width: 380px;
+    background: var(--jet-card);
+    color: var(--text-light);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    box-sizing: border-box;
+    padding: 1.5rem;
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.confirm-overlay.is-open .confirm-box {
+    transform: scale(1) translateY(0);
+}
+
+.confirm-message {
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text-light);
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.btn-confirm-ok {
+    background: #EF5350;
+    color: #fff;
+    border: 1px solid #EF5350;
+    border-radius: 8px;
+    padding: 0.8rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .confirm-overlay, .confirm-box { transition: none; }
+}
+
+@media (min-width: 768px) {
+    .btn-confirm-ok:hover {
+        background: color-mix(in srgb, #EF5350 85%, black);
+    }
+}
+
+.edit-modal-kicker {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+#edit-modal-title {
+    font-family: var(--font-primary);
+    font-size: 1.1rem;
+    margin: 0.1rem 0 0 0;
+    color: var(--text-light);
+}
+
+.edit-modal-close {
+    background: #181A1A;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.edit-modal-form {
+    padding: 0.85rem 1rem;
+}
+
+.edit-modal-id-row {
+    background: #181A1A;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.45rem 0.75rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.edit-modal-id-row strong {
+    color: var(--primary-color);
+    font-size: 0.85rem;
+}
+
+.edit-form-section {
+    margin-bottom: 0.85rem;
+}
+
+.edit-form-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: var(--moonstone-color);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.6rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+}
+
+.edit-modal-form .form-group-premium {
+    gap: 0.25rem;
+}
+
+.edit-modal-form label {
+    font-size: 0.72rem;
+}
+
+.edit-modal-form input[type="text"],
+.edit-modal-form input[type="number"],
+.edit-modal-form select {
+    background: #181A1A;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-family: var(--font-secondary);
+    outline: none;
+    min-height: 38px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.edit-modal-form select option {
+    background: #181A1A;
+    color: var(--text-light);
+}
+
+.edit-images-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+.edit-images-grid .image-edit-container {
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.image-edit-container label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.current-image-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 110px;
+    border: 1px dashed var(--border-color);
+    border-radius: 6px;
+    background: #181A1A;
+    overflow: hidden;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.current-image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Botón para intercambiar la imagen de este slot con la del slot 1
+   (portada del catálogo público) sin tener que volver a subirla --
+   ver hacerImagenPrincipal() en admin-view.js. */
+.btn-hacer-principal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 100%;
+    margin-top: 0.35rem;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-light);
+    background: #262929;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-hacer-principal:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #ffffff;
+}
+
+.image-edit-container input[type="file"] {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    width: 100%;
+}
+
+.image-edit-container input[type="file"]::-webkit-file-upload-button {
+    background: #333737;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-light);
+    padding: 0.3rem 0.5rem;
+    font-size: 0.72rem;
+    cursor: pointer;
+    margin-right: 0.3rem;
+}
+
+.new-image-preview {
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--primary-color);
+}
+
+.new-image-preview img {
+    max-width: 100%;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid var(--primary-color);
+}
+
+.edit-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.edit-modal-actions .btn-premium,
+.edit-modal-actions .btn-secondary-premium {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    border-radius: 8px;
+}
+
+/* Los botones de "Cancelar" / "Guardar cambios" se ordenan con Guardar
+   arriba en móvil (la acción principal, más fácil de alcanzar con el
+   pulgar); en escritorio vuelven al orden natural en fila. */
+.edit-modal-actions .edit-save-btn {
+    order: -1;
+}
+
+/* ==================== ALERTAS ==================== */
+.alert-premium {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.1rem;
+    border-radius: 8px;
+    margin-bottom: 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.alert-premium-close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    opacity: 0.7;
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.1rem;
+}
+
+.alert-premium-close:hover {
+    opacity: 1;
+}
+
+/* #status-alert deja de ser parte del flujo normal de la página y se
+   vuelve un toast flotante fijo al viewport. Antes, si estabas
+   trabajando en una fila hasta abajo de la tabla (editar, eliminar),
+   el aviso de éxito/error aparecía hasta arriba del documento y
+   quedaba fuera de vista sin hacer scroll. Ahora aparece siempre
+   sobre lo que estás viendo, sin importar qué tan abajo hayas
+   scrolleado. --header-height la fija admin-view.js según el alto
+   real del header, para que el toast quede DEBAJO del menú y nunca
+   lo tape (antes bloqueaba los enlaces de Control/Dashboard). */
+#status-alert {
+    position: fixed;
+    top: calc(var(--header-height, 70px) + 0.75rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    width: min(92vw, 480px);
+    margin-bottom: 0;
+    background-color: var(--jet-card);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    animation: alert-toast-in 0.2s ease-out;
+}
+
+@keyframes alert-toast-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Alerta propia del modal de edición: vive DENTRO de la tarjeta del
+   modal (justo bajo el encabezado), para que un error o confirmación
+   al guardar aparezca sobre la ficha que se está editando, en vez de
+   quedar detrás del overlay del modal. position: sticky es clave --
+   el formulario del modal tiene scroll interno (.edit-modal tiene
+   overflow-y: auto) y el botón "Guardar cambios" queda hasta abajo;
+   sin sticky, la alerta quedaba arriba del todo, fuera de vista si
+   estabas scrolleado hacia el botón, y el modal se cerraba antes de
+   que alcanzaras a subir a verla. */
+#edit-modal-alert {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin: 0 0 1rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+.alert-info {
+    background: rgba(122, 166, 179, 0.15);
+    color: #90CAF9;
+    border: 1px solid rgba(122, 166, 179, 0.3);
+}
+
+.alert-success {
+    background: rgba(46, 125, 50, 0.15);
+    color: #81C784;
+    border: 1px solid rgba(46, 125, 50, 0.3);
+}
+
+.alert-error {
+    background: rgba(211, 47, 47, 0.15);
+    color: #E57373;
+    border: 1px solid rgba(211, 47, 47, 0.3);
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* ============================================================
+   TABLET Y ESCRITORIO (>= 768px)
+   ------------------------------------------------------------
+   Único punto de quiebre del archivo. Aquí solo se redefine lo
+   que realmente cambia al escalar: más columnas, más aire, texto
+   más grande, y los efectos :hover (que en el base móvil no
+   existen, para no dejar estilos "pegados" tras un toque en
+   pantallas táctiles).
+   ============================================================ */
+@media (min-width: 768px) {
+
+    /* --- Header --- */
+    .header-container {
+        padding: 1rem 1.5rem;
+        flex-wrap: nowrap;
+    }
+
+    .brand-title {
+        font-size: 1.4rem;
+    }
+
+    .nav-menu {
+        width: auto;
+        flex-wrap: nowrap;
+        gap: 1.5rem;
+    }
+
+    .nav-link:hover {
+        color: var(--primary-color);
+    }
+
+    .nav-link--active:hover {
+        color: var(--primary-color);
+    }
+
+    /* --- Layout principal --- */
+    .admin-main {
+        margin: 2rem auto;
+        padding: 0 1.5rem 3rem;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .dashboard-header p {
+        font-size: 1rem;
+    }
+
+    /* --- Tarjetas --- */
+    .premium-card {
+        padding: 1.75rem;
+        margin-bottom: 2rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* --- Formulario "Agregar ejemplar": pasa a 2 columnas densas --- */
+    .admin-grid-form {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.75rem;
+    }
+
+    .premium-card:has(#add-ejemplar-form) {
+        padding: 1rem 1.5rem;
+    }
+
+    .premium-card:has(#add-ejemplar-form) .card-title {
+        font-size: 1.25rem;
+    }
+
+    #add-ejemplar-form {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem 1.25rem;
+        align-items: center;
+    }
+
+    #add-ejemplar-form .form-group-premium {
+        gap: 0.15rem;
+    }
+
+    #add-ejemplar-form .form-group-premium label {
+        font-size: 0.72rem;
+    }
+
+    #add-ejemplar-form input[type="text"],
+    #add-ejemplar-form input[type="number"],
+    #add-ejemplar-form select {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.85rem;
+        min-height: 34px;
+    }
+
+    #add-ejemplar-form .drop-zone {
+        padding: 0.3rem 0.5rem;
+        min-height: 34px;
+        border-width: 1px;
+    }
+
+    #add-ejemplar-form .drop-text {
+        font-size: 0.75rem;
+    }
+
+    #add-ejemplar-form .preview-container {
+        padding: 0.25rem 0.5rem;
+        margin-top: 0.2rem;
+    }
+
+    #add-ejemplar-form .preview-thumb {
+        width: 30px;
+        height: 30px;
+    }
+
+    #add-ejemplar-form .form-actions-full {
+        margin-top: 0.25rem;
+        justify-content: flex-end;
+    }
+
+    #add-ejemplar-form .form-actions-full .btn-premium {
+        width: auto;
+        padding: 0.45rem 1.25rem;
+        font-size: 0.85rem;
+    }
+
+    .form-actions-full {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    /* --- Drop zone genérica: hover y look táctil-vs-mouse --- */
+    .drop-zone:hover {
+        border-color: var(--primary-color);
+        background: rgba(238, 108, 41, 0.08);
+    }
+
+    .btn-change-img:hover {
+        background: #454A4A;
+    }
+
+    /* --- Botones: efectos hover solo con mouse --- */
+    .btn-premium:hover {
+        background: var(--primary-hover);
+    }
+
+    .btn-secondary-premium:hover {
+        background: #333737;
+        border-color: #525858;
+    }
+
+    /* --- Filtros: rejilla horizontal con acciones alineadas a la derecha --- */
+    .premium-card:has(.filter-grid-premium) {
+        padding: 1rem 1.5rem;
+    }
+
+    .premium-card:has(.filter-grid-premium) .card-title {
+        font-size: 1.25rem;
+    }
+
+    .filter-grid-premium {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 0.75rem;
+    }
+
+    .filter-grid-premium .form-group-premium {
+        flex: 1 1 160px;
+        min-width: 140px;
+        max-width: 220px;
+        gap: 0.15rem;
+    }
+
+    .filter-grid-premium .form-group-premium label {
+        font-size: 0.72rem;
+    }
+
+    .filter-grid-premium input,
+    .filter-grid-premium select {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.85rem;
+        min-height: 34px;
+    }
+
+    /* El grupo de botones se acopla como un elemento más de la barra
+       flex de arriba: se empuja a la derecha con margin-left auto y
+       se queda en la misma fila que los campos mientras haya espacio;
+       si no cabe, baja completo (con sus 3 botones juntos) a su propia
+       fila, en vez de quedar una fila de inputs estirados de más y
+       otra fila de botones descolgada abajo. */
+    .filter-actions-right {
+        flex: 0 0 auto;
+        flex-direction: row;
+        justify-content: flex-end;
+        margin-left: auto;
+        gap: 0.5rem;
+        margin-top: 0;
+    }
+
+    .filter-actions-right .btn-premium,
+    .filter-actions-right .btn-secondary-premium {
+        width: auto;
+        padding: 0.4rem 1rem;
+        font-size: 0.82rem;
+        white-space: nowrap;
+    }
+
+    /* --- Tabla: un poco más de aire, encabezados más grandes --- */
+    .table-premium {
+        font-size: 0.9rem;
+    }
+
+    .table-premium th {
+        padding: 0.85rem 1rem;
+        font-size: 0.75rem;
+    }
+
+    .table-premium td {
+        padding: 0.85rem 1rem;
+    }
+
+    .table-premium tbody tr:hover {
+        background: #232626;
+    }
+
+    /* Misma razón que .row-selected td[data-col="id"] arriba: el
+       fondo sólido de la columna fija tapa el :hover si no se
+       repite explícitamente sobre ella. */
+    .table-premium tbody tr:hover td[data-col="id"] {
+        background: #232626;
+    }
+
+    .table-premium tbody tr.row-selected:hover td[data-col="id"] {
+        background-color: color-mix(in srgb, var(--primary-color) 20%, #181A1A);
+    }
+
+    .table-premium tbody tr.row-selected:hover {
+        background-color: color-mix(in srgb, var(--primary-color) 20%, #181A1A);
+    }
+
+    .table-thumb {
+        width: 44px;
+        height: 44px;
+    }
+
+    .table-premium .status-badge {
+        padding: 0.25rem 0.65rem;
+        font-size: 0.75rem;
+    }
+
+    /* --- Botones de acción de la tabla --- */
+    .btn-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .btn-icon:hover {
+        background: #383D3D;
+    }
+
+    .btn-edit-icon:hover {
+        color: #9cd1e0;
+        border-color: var(--moonstone-color);
+    }
+
+    .btn-delete-icon:hover {
+        color: #FF8A80;
+        border-color: #EF5350;
+    }
+
+    /* --- Modal de edición: más aire, 3 columnas de imágenes, acciones en fila --- */
+    .edit-modal-header {
+        padding: 0.75rem 1.25rem;
+    }
+
+    #edit-modal-title {
+        font-size: 1.15rem;
+    }
+
+    .edit-modal-close:hover {
+        background: #333737;
+        color: var(--text-light);
+    }
+
+    .edit-modal-form {
+        padding: 0.75rem 1.25rem;
+    }
+
+    .edit-modal-id-row {
+        padding: 0.35rem 0.75rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .edit-form-section {
+        margin-bottom: 0.6rem;
+    }
+
+    .edit-form-section-title {
+        padding-bottom: 0.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .edit-modal-form input[type="text"],
+    .edit-modal-form input[type="number"],
+    .edit-modal-form select {
+        padding: 0.25rem 0.55rem;
+        font-size: 0.8rem;
+        min-height: 30px;
+    }
+
+    .edit-images-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .current-image-box {
+        height: 65px;
+    }
+
+    .new-image-preview img {
+        height: 35px;
+    }
+
+    .edit-modal-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 0.6rem;
+        padding-top: 0.6rem;
+    }
+
+    .edit-modal-actions .btn-premium,
+    .edit-modal-actions .btn-secondary-premium {
+        width: auto;
+        padding: 0.35rem 0.85rem;
+        font-size: 0.8rem;
+        border-radius: 6px;
+    }
+
+    .edit-modal-actions .edit-save-btn {
+        order: initial;
+    }
+
+    /* --- Vistas guardadas y búsqueda: en fila, no apiladas --- */
+    .saved-views-bar {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .saved-views-select-group,
+    .saved-views-save-group {
+        flex: 1 1 auto;
+    }
+
+    .unified-search-bar input {
+        font-size: 0.95rem;
+    }
+}

@@ -1,0 +1,220 @@
+/* ============================================================
+   METODOLOGÍA MOBILE-FIRST
+   Base = móvil pequeño (< 400px): 2 columnas. Los siguientes
+   bloques @media (min-width: ...) van ampliando el número de
+   columnas y el espaciado según el ancho disponible. No existen
+   @media (max-width: ...) en este archivo.
+   ============================================================ */
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    padding: 0.4rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.catalog-loading,
+.catalog-error,
+.catalog-empty {
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--card-bg, #282B2B);
+    border-radius: 10px;
+    font-size: 1.1rem;
+    color: var(--text-light, #F4F5F5);
+}
+
+.catalog-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border-left-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------------
+   Skeleton loaders (grid "fantasma" mientras carga la 1a página)
+   ------------------------------------------------------------------ */
+.catalog-grid--skeleton {
+    pointer-events: none;
+}
+
+.card-skeleton {
+    background-color: var(--card-bg, #282B2B);
+    border: 1px solid var(--border-color, #3D4242);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.card-skeleton-image,
+.card-skeleton-line {
+    border-radius: 6px;
+    background: linear-gradient(
+        100deg,
+        var(--jet-dark, #1E2020) 30%,
+        var(--border-color, #3D4242) 50%,
+        var(--jet-dark, #1E2020) 70%
+    );
+    background-size: 200% 100%;
+    animation: skeletonShimmer 1.4s ease-in-out infinite;
+}
+
+.card-skeleton-image {
+    height: 100px;
+}
+
+.card-skeleton-line {
+    height: 10px;
+}
+
+.card-skeleton-line--wide { width: 90%; }
+.card-skeleton-line--short { width: 50%; }
+
+@keyframes skeletonShimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card-skeleton-image,
+    .card-skeleton-line {
+        animation: none;
+    }
+}
+
+.empty-catalog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    background-color: var(--card-bg, #282B2B);
+    border-radius: 12px;
+    border: 2px dashed var(--moonstone-color);
+    margin: 2rem 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.empty-icon,
+.error-icon {
+    display: inline-flex;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.5rem;
+    color: var(--moonstone-color, #7AA6B3);
+}
+
+.error-icon {
+    color: var(--primary-color);
+}
+
+.empty-icon svg,
+.error-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.btn-icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+}
+
+.btn-clear-filters {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+}
+
+.empty-catalog h3 {
+    font-size: 1.5rem;
+    color: var(--text-light, #ffffff);
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-catalog p {
+    color: var(--moonstone-color);
+    font-size: 1rem;
+    margin: 0 0 1.5rem 0;
+}
+
+.btn-clear-filters {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Contenedor del botón "Cargar más", debajo del grid (no es parte de
+   la rejilla de tarjetas, es un hermano suyo dentro del contenedor). */
+.catalog-load-more-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0;
+}
+
+.btn-load-more:disabled {
+    opacity: 0.6;
+    cursor: default;
+    transform: none;
+}
+
+/* Móvil estándar (>= 400px) */
+@media (min-width: 400px) {
+    .catalog-grid {
+        gap: 0.4rem;
+    }
+}
+
+/* Tablet (>= 768px): 3 columnas, sin el padding extra de móvil */
+@media (min-width: 768px) {
+    .catalog-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.85rem;
+        padding: 0;
+    }
+
+    .btn-clear-filters:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .card-skeleton-image {
+        height: 220px;
+    }
+}
+
+/* Escritorio (>= 1025px): 4 columnas */
+@media (min-width: 1025px) {
+    .catalog-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+}

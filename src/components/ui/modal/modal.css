@@ -1,0 +1,707 @@
+/* ============================================================
+   METODOLOGÍA MOBILE-FIRST
+   Base = móvil (< 768px): modal a pantalla completa, imagen y
+   ficha apiladas en 1 columna, "Otros ejemplares" en carrusel
+   horizontal. Un solo @media (min-width: 768px) amplía a modal
+   flotante de 2 columnas y agrega los :hover. No existen
+   @media (max-width: ...) en este archivo.
+   ============================================================ */
+
+/* Container y Overlay Principal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 17, 17, 0.85);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10000;
+    padding: 0.4rem;
+    box-sizing: border-box;
+}
+
+.modal-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Botón de Cerrar (X) */
+.modal-close {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(40, 43, 43, 0.95); /* Jet */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 1.4rem;
+    line-height: 1;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10020;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Contenedor de la Ficha */
+.modal-container {
+    position: relative;
+    background-color: var(--card-bg, #282B2B);
+    width: 100%;
+    max-width: 100%;
+    max-height: 94vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    padding: 0.75rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-light, #ffffff);
+    box-sizing: border-box;
+    transform: scale(0.94) translateY(12px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.is-open .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .modal-overlay,
+    .modal-container {
+        transition: none;
+    }
+}
+
+/* Transiciones de Contenido */
+#modal-body-content {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    will-change: opacity, transform;
+}
+
+#modal-body-content.fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+#modal-body-content.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Layout Principal */
+.modal-main-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    align-items: start;
+}
+
+/* Columna Izquierda: Imagen y Lupa */
+.modal-col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-image-main-wrapper {
+    width: 100%;
+    aspect-ratio: auto;
+    height: 200px;
+    max-height: 200px;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #1a1c1c;
+    position: relative;
+    cursor: zoom-in;
+}
+
+.modal-main-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.15s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease;
+    will-change: transform;
+}
+
+/* Miniaturas de la misma serpiente */
+.modal-thumbnails {
+    display: flex;
+    gap: 6px;
+}
+
+.modal-thumb-wrapper {
+    width: 52px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #1a1c1c;
+}
+
+.modal-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    opacity: 0.6;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.modal-thumb.active {
+    opacity: 1;
+    border-color: var(--primary-color); /* Orange */
+}
+
+/* Columna Derecha: Información */
+.modal-col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Barra de Navegación */
+.modal-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.25);
+    padding: 4px 8px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+}
+
+.modal-nav-btn {
+    background: none;
+    border: none;
+    color: var(--moonstone-color); /* Moonstone */
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: 2px 6px;
+}
+
+.modal-counter {
+    font-size: 0.75rem;
+    color: #a0a0a0;
+    font-weight: 600;
+}
+
+/* Encabezado */
+.modal-header-info {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.modal-header-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-width: 0;
+}
+
+.modal-quick-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.btn-icon-round {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background-color: rgba(0, 0, 0, 0.25);
+    color: var(--text-light, #F4F5F5);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-icon-round svg {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-icon-round:active {
+    transform: scale(0.9);
+}
+
+.btn-favorito.is-active {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-favorito.is-active svg {
+    fill: var(--primary-color);
+}
+
+.btn-icon-round.is-confirmado {
+    width: auto;
+    padding: 0 10px;
+    color: var(--status-disponible, #2E7D32);
+    border-color: var(--status-disponible, #2E7D32);
+}
+
+.btn-feedback-text {
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.modal-title-species {
+    font-size: 0.8rem;
+    font-weight: 800;
+    font-style: italic;
+    margin: 0;
+    color: #ffffff;
+    line-height: 1.1;
+}
+
+.modal-genetics-badge {
+    background-color: transparent; /* Quita el fondo del rectángulo */
+    color: var(--primary-color); /* Hereda el color del texto del contenedor padre, o puedes poner un color específico como #fff o #000 */
+    padding: 0; /* Opcional: quita el espacio interno para que no parezca un botón */
+    border-radius: 0; /* Opcional: quita las esquinas redondeadas */
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+/* Cuadrícula de Detalles */
+.modal-details-grid {
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-item label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--moonstone-color); /* Moonstone */
+    letter-spacing: 0.8px;
+}
+
+.detail-item span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Badges de Estatus */
+.status-disponible, .detail-status-text.status-disponible { background-color: var(--status-disponible, #2e7d32); color: #fff; }
+.status-apartado, .detail-status-text.status-apartado { background-color: var(--primary-color); color: #fff; }
+.status-vendido, .detail-status-text.status-vendido { background-color: var(--status-vendido, #dc2626); color: #fff; }
+.status-holdback, .detail-status-text.status-holdback { background-color: var(--moonstone-color); color: #282B2B; }
+
+.detail-status-text {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+    font-size: 0.75rem !important;
+}
+
+/* Precio */
+.modal-price-box {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.modal-price-label {
+    font-size: 0.8rem;
+    color: #a0a0a0;
+    font-weight: 700;
+}
+
+.modal-price {
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--primary-color); /* Orange */
+}
+
+/* Botón WhatsApp */
+.btn-whatsapp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn-whatsapp svg {
+    width: 18px;
+    height: 18px;
+}
+
+.btn-whatsapp.btn-available {
+    background-color: #25D366;
+    color: #ffffff;
+}
+
+.btn-whatsapp.btn-unavailable {
+    background-color: var(--moonstone-color); /* Moonstone */
+    color: #ffffff;
+}
+
+/* Sección Otros Ejemplares — carrusel horizontal en móvil */
+.modal-others-section {
+    margin-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 10px;
+}
+
+.modal-others-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--moonstone-color); /* Moonstone */
+    margin: 0 0 8px 0;
+}
+
+.modal-others-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+}
+
+.modal-others-grid::-webkit-scrollbar {
+    height: 4px;
+}
+
+.modal-others-grid::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.modal-others-grid::-webkit-scrollbar-thumb {
+    background: var(--moonstone-color); /* Moonstone */
+    border-radius: 4px;
+}
+
+.no-others-message {
+    color: #a0a0a0;
+    font-size: 0.95rem;
+    font-style: italic;
+    margin: 8px 0 0 0;
+}
+
+.other-card {
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 6px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 0 0 135px;
+    scroll-snap-align: start;
+    box-sizing: border-box;
+}
+
+.other-card-img-wrapper {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.other-card-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.other-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow: hidden;
+}
+
+.other-card-species {
+    font-size: 0.7rem;
+    max-width: 75px;
+    font-weight: 700;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.other-card-price {
+    font-size: 0.75rem;
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+/* CAMBIO (etiqueta de estatus en cada tarjeta): ahora que "otros
+   ejemplares" mezcla Disponibles y Apartados, hace falta distinguirlos
+   a simple vista para que nadie confunda uno Apartado con uno que
+   todavía se puede comprar. El color de fondo lo pone gratis la regla
+   ".status-disponible / .status-apartado / ..." que ya existe más
+   arriba en este archivo (selector compartido con .detail-status-text)
+   -- aquí solo se agrega el tamaño/forma de la versión mini. */
+.other-card-status {
+    display: inline-block;
+    width: fit-content;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ============================================================
+   TABLET Y ESCRITORIO (>= 768px)
+   ============================================================ */
+@media (min-width: 768px) {
+    .modal-overlay {
+        padding: 24px;
+    }
+
+    .modal-close {
+        top: 5px;
+        right: 5px;
+        width: 34px;
+        height: 34px;
+        font-size: 26px;
+    }
+
+    .modal-close:hover {
+        background-color: var(--primary-color); /* Orange */
+        color: #ffffff;
+        transform: scale(1.08);
+        border-color: var(--primary-color);
+    }
+
+    .modal-container {
+        width: 90%;
+        max-width: 1200px;
+        max-height: 90vh;
+        border-radius: 16px;
+        padding: 36px;
+    }
+
+    .modal-main-layout {
+        grid-template-columns: 1.6fr 1fr;
+        gap: 36px;
+    }
+
+    .modal-col-left {
+        gap: 16px;
+    }
+
+    .modal-image-main-wrapper {
+        aspect-ratio: 4 / 3;
+        height: auto;
+        max-height: none;
+    }
+
+    .modal-main-img {
+        height: 100%;
+    }
+
+    .modal-thumbnails {
+        gap: 12px;
+    }
+
+    .modal-thumb-wrapper {
+        width: 84px;
+        height: 64px;
+    }
+
+    .modal-thumb:hover {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    .modal-col-right {
+        gap: 20px;
+    }
+
+    .modal-nav-bar {
+        padding: 8px 14px;
+    }
+
+    .modal-nav-btn {
+        font-size: 0.9rem;
+        padding: 4px 8px;
+    }
+
+    .modal-nav-btn:hover {
+        color: #ffffff;
+    }
+
+    .modal-counter {
+        font-size: 0.82rem;
+    }
+
+    .modal-header-info {
+        gap: 10px;
+    }
+
+    .btn-icon-round {
+        width: 38px;
+        height: 38px;
+    }
+
+    .btn-icon-round svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .modal-title-species {
+        font-size: 1rem;
+    }
+
+    .modal-genetics-badge {
+        padding: 4px 0px;
+        font-size: 2rem;
+    }
+
+    .modal-details-grid {
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .detail-item label {
+        font-size: 0.75rem;
+    }
+
+    .detail-item span {
+        font-size: 1.1rem;
+    }
+
+    .detail-status-text {
+        padding: 2px 8px;
+        font-size: 0.9rem !important;
+    }
+
+    .modal-price-box {
+        gap: 12px;
+    }
+
+    .modal-price-label {
+        font-size: 0.95rem;
+    }
+
+    .modal-price {
+        font-size: 2.2rem;
+    }
+
+    .btn-whatsapp {
+        padding: 16px 24px;
+        font-size: 1.05rem;
+        gap: 12px;
+    }
+
+    .btn-whatsapp svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .btn-whatsapp.btn-available:hover {
+        background-color: #1eb855;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+
+    .btn-whatsapp.btn-unavailable:hover {
+        background-color: var(--moonstone-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(122, 166, 179, 0.4);
+    }
+
+    .modal-others-section {
+        margin-top: 36px;
+        padding-top: 24px;
+    }
+
+    .modal-others-title {
+        font-size: 1.1rem;
+        margin-bottom: 16px;
+    }
+
+    .modal-others-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+        overflow-x: visible;
+        padding-bottom: 0;
+    }
+
+    .other-card {
+        padding: 10px;
+        gap: 12px;
+        flex: initial;
+    }
+
+    .other-card:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+    }
+
+    .other-card-img-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+
+    .other-card-species {
+        font-size: 0.85rem;
+        max-width: none;
+    }
+
+    .other-card-price {
+        font-size: 0.85rem;
+    }
+
+    .other-card-status {
+        font-size: 0.68rem;
+        padding: 2px 7px;
+    }
+}

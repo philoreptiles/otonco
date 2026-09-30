@@ -1,0 +1,20 @@
+name = "criadores-upload-imagenes"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+# Conecta este Worker directamente al bucket de R2 -- por esto no
+# hace falta ninguna llave de acceso tipo S3 en ningún lado: el
+# binding le da acceso al Worker desde dentro de Cloudflare.
+[[r2_buckets]]
+binding = "BUCKET_EJEMPLARES"
+bucket_name = "criadores-imagenes"
+
+# Variables normales (no secretas -- ver README.md para los valores
+# reales de tu cuenta). SUPABASE_ANON_KEY es pública por diseño
+# (es la misma que usa el sitio), así que no hace falta guardarla
+# como secret.
+[vars]
+SUPABASE_URL = "https://qoikskyjlhozamwnoivj.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvaWtza3lqbGhvemFtd25vaXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzA1NTAsImV4cCI6MjEwNDkwNjU1MH0.78wCK17ERt_JnGZBIDNfh57zALVf2dWqIrgqKO2R8jw"
+R2_PUBLIC_BASE_URL = "https://pub-044665661efd4b3a9515c77cf82588ae.r2.dev"
+ALLOWED_ORIGIN = "*"
