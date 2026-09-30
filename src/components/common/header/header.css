@@ -67,6 +67,43 @@
     padding: 0 !important;
 }
 
+/* LOGO (reemplaza al texto de marca y al subtitulo legal)
+   Mobile-first: 32px en movil; 40px desde 768px (ver @media abajo).
+   El PNG es de 900x900, asi que se limita la altura y el ancho se
+   calcula solo (width:auto) para no deformarlo. */
+.logo-link,
+.logo-link:visited,
+.logo-link:hover,
+.logo-link:active {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem; /* separacion logo-texto (solo gap, sin margin en el span) */
+    height: 100%;
+    flex-shrink: 0;
+    color: #ffffff !important; /* evita el azul por defecto de los enlaces */
+    text-decoration: none !important;
+    background: transparent !important;
+}
+
+.logo-img {
+    height: 32px;
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+    display: block;
+}
+
+/* Texto "Otonco PIMVS" junto al logo. La tipografia la hereda de
+   .site-header (system-ui). Mobile-first: 1rem en movil, 1.15rem
+   desde 768px. */
+.logo-text {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+}
+
 .header-nav {
     display: flex;
     align-items: center;
@@ -132,6 +169,14 @@
    TABLET Y ESCRITORIO (>= 768px)
    ============================================================ */
 @media (min-width: 768px) {
+    .logo-img {
+        height: 40px;
+    }
+
+    .logo-text {
+        font-size: 1.15rem;
+    }
+
     .header-container {
         flex-direction: row;
         align-items: center;

@@ -40,12 +40,12 @@ export const siteConfig = {
     // proyectos). Solo se justifica un proyecto de Supabase dedicado
     // aparte si un cliente puntual exige aislamiento de infraestructura
     // por contrato/compliance, no como estrategia de crecimiento.
-    criadorId: 2,
+    criadorId: 3,
     // Mismo criador que arriba, pero en texto (coincide con el "slug"
     // de la tabla criadores). Se usa para organizar las imágenes de
     // este criador dentro de la carpeta que le corresponde en el
     // bucket de Cloudflare R2 compartido (ver worker-upload-imagenes/).
-    criadorSlug: 'reptiles-duran',
+    criadorSlug: 'otonco',
     // Título de la pestaña del navegador. Si lo dejas vacío (''), se
     // usa automáticamente brandName.
     pageTitle: 'Otonco PIMVS',

@@ -17,4 +17,10 @@ bucket_name = "criadores-imagenes"
 SUPABASE_URL = "https://qoikskyjlhozamwnoivj.supabase.co"
 SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvaWtza3lqbGhvemFtd25vaXZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzMzA1NTAsImV4cCI6MjEwNDkwNjU1MH0.78wCK17ERt_JnGZBIDNfh57zALVf2dWqIrgqKO2R8jw"
 R2_PUBLIC_BASE_URL = "https://pub-044665661efd4b3a9515c77cf82588ae.r2.dev"
+# Orígenes que pueden llamar a este Worker desde el navegador: "*" o una
+# lista separada por comas de orígenes EXACTOS (sin "/" al final).
+# Ejemplo para producción (ajusta a tus dominios reales):
+#   ALLOWED_ORIGIN = "https://otonco.com,https://reptilesduran.com,http://localhost:5173"
+# Se deja en "*" hasta que tengas los dominios finales; la seguridad real
+# la da el token de Supabase + el aislamiento por criador del Worker, no CORS.
 ALLOWED_ORIGIN = "*"
