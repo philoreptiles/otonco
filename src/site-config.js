@@ -55,7 +55,7 @@ export const siteConfig = {
     semarnatFolio: 'SEMARNAT-PIMVS-IN-0000-VER',
     // Número de WhatsApp en formato internacional SIN "+" ni espacios,
     // ej. 521XXXXXXXXXX para México.
-    whatsappNumber: '5210000000000',
+    whatsappNumber: '5212291101017',
     location: 'Veracruz, México',
     footerCopyrightYear: new Date().getFullYear(),
 
