@@ -48,7 +48,7 @@ export const siteConfig = {
     criadorSlug: 'otonco',
     // Título de la pestaña del navegador. Si lo dejas vacío (''), se
     // usa automáticamente brandName.
-    pageTitle: 'Otonco PIMVS',
+    pageTitle: 'Otonco',
     // Folio de la Unidad de Manejo para la Conservación de Vida Silvestre
     // (UMA) o registro PIMVS del criador. Déjalo en cadena vacía '' si no
     // aplica y el header simplemente no mostrará esa línea.
