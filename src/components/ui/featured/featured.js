@@ -104,15 +104,23 @@ export async function renderFeatured(containerId) {
 
             const { url: whatsappUrl, btnText: whatsappTexto } = getWhatsAppDetails(destacado);
 
+            // CAMBIO: las dos etiquetas superiores (badge "Ejemplares
+            // destacados" + estatus) viven dentro de una misma barra flex,
+            // .featured-hero-top, en vez de estar cada una con
+            // position:absolute en una esquina. Así, si no caben en una sola
+            // línea (pantallas angostas), la segunda baja a otra fila en
+            // lugar de encimarse sobre la primera (ver featured.css).
             return `
                 <div class="featured-slide${index === 0 ? ' featured-slide--active' : ''}" data-index="${index}">
                     <img src="${imagenUrl}" alt="${especie}" class="featured-hero-bg" loading="lazy" />
                     <div class="featured-hero-overlay"></div>
 
-                    <span class="featured-hero-badge">
-                        ${iconMarkup('sparkles')} Ejemplares destacados
-                    </span>
-                    <span class="featured-hero-status ${statusClass}">${estatus}</span>
+                    <div class="featured-hero-top">
+                        <span class="featured-hero-badge">
+                            ${iconMarkup('sparkles')} Ejemplares destacados
+                        </span>
+                        <span class="featured-hero-status ${statusClass}">${estatus}</span>
+                    </div>
 
                     <div class="featured-hero-content">
                         <span class="featured-hero-species">${especie}</span>
