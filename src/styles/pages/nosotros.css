@@ -3,10 +3,9 @@
    --font-secondary, etc.) ya NO se definen aquí -- vienen por cascada
    de main.css (importado desde nosotros.js), cuyos valores en tiempo
    de carga los llena site-config.js vía applySiteTheme(). Solo se
-   quedan aquí --bg-light y --text-muted porque son específicas del
-   diseño de esta página y no tienen equivalente canónico. */
+   queda aquí --text-muted porque es específica del diseño de esta
+   página y no tiene equivalente canónico. */
 :root {
-    --bg-light: #f8f9fa;
     --text-muted: #b0bec5;
 }
 
@@ -40,176 +39,179 @@ body {
     margin-bottom: 2rem;
 }
 
-/* 1. Hero Section con Cuadro/Tarjeta independiente (Base - Mobile) */
+/* ============================================================
+   "SOBRE OTONCO" -- diseño editorial (Mobile-first)
+   Líneas finas en vez de cajas, espacio negativo amplio y un
+   ancho de lectura de ~68ch. Solo usa variables del sitio.
+   ============================================================ */
+.about-measure {
+    max-width: 68ch;
+}
+
+/* Hero: título + bajada, alineados a la izquierda */
 .nosotros-hero {
-    background-color: var(--jet-card);
-    padding: 3rem 1.5rem 2.5rem;
+    padding: 4rem 0 2rem;
 }
 
-.hero-card {
-    background-color: var(--jet-dark);
-    border: 1px solid rgba(122, 166, 179, 0.25);
-    border-radius: 16px;
-    padding: 2rem 1.25rem; /* Padding ajustado para móvil */
-    text-align: center;
-    max-width: 850px;
-    margin: 0 auto;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-}
-
-.hero-subtitle {
-    color: var(--moonstone-color);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    display: block;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-}
-
-.hero-card h1 {
+.nosotros-hero h1 {
     font-family: var(--font-primary);
-    font-size: 2rem; /* Tamaño de fuente ajustado para móvil */
+    font-size: 2.25rem;
+    line-height: 1.1;
     color: var(--primary-color);
     margin: 0 0 1.25rem 0;
-    line-height: 1.2;
 }
 
 .nosotros-description {
-    font-size: 1rem; /* Tamaño de fuente ajustado para móvil */
-    line-height: 1.7;
-    color: var(--text-light);
-    margin: 0;
-}
-
-.nosotros-description strong {
-    color: var(--primary-color);
-}
-
-/* 2. Sección Valores (Base - Mobile) */
-.nosotros-valores-section {
-    background-color: #212323;
-    padding: 4rem 0;
-}
-
-.nosotros-valores {
-    display: grid;
-    grid-template-columns: 1fr; /* Una columna para pantallas pequeñas */
-    gap: 1.5rem; /* Espaciado adaptado para móvil */
-}
-
-.valor-card {
-    background-color: var(--jet-card);
-    border: 1px solid rgba(122, 166, 179, 0.3);
-    border-radius: 12px;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.valor-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-}
-
-.valor-icon {
-    width: 60px;
-    height: 60px;
-    margin: 0 auto 1.25rem;
-    background-color: rgba(238, 108, 41, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.valor-icon i {
-    font-size: 1.75rem;
-    color: var(--primary-color);
-}
-
-.valor-card h3 {
-    font-family: var(--font-primary);
-    font-size: 1.35rem;
-    color: var(--text-light);
-    margin: 0 0 0.75rem 0;
-}
-
-.valor-card p {
-    font-size: 0.95rem;
+    font-size: 1.1rem;
+    line-height: 1.6;
     color: var(--text-muted);
-    line-height: 1.5;
     margin: 0;
 }
 
-/* 3. Registro SEMARNAT (Base - Mobile) */
-.nosotros-registro-section {
-    background-color: var(--bg-light);
-    color: var(--jet-card);
-    padding: 4rem 1.5rem;
-    display: flex;
-    justify-content: center;
+/* Introducción (primer párrafo), sin encabezado propio */
+.about-intro {
+    padding: 0 0 3.5rem;
 }
 
-.registro-card {
-    background-color: var(--text-light);
-    border: 2px dashed var(--moonstone-color);
-    border-radius: 16px;
-    padding: 2rem 1rem; /* Padding ajustado para móvil */
-    text-align: center;
-    max-width: 650px;
-    width: 100%;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+.about-intro-text {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--text-light);
+    margin: 0;
 }
 
-.registro-badge i {
-    font-size: 3rem;
-    color: var(--primary-color);
-    margin-bottom: 1rem;
+/* Bloques con encabezado numerado, separados por una línea fina */
+.about-block {
+    border-top: 1px solid rgba(122, 166, 179, 0.25);
+    padding: 3rem 0;
 }
 
-.registro-card h2 {
+.about-block-inner {
+    display: grid;
+    grid-template-columns: 1fr; /* móvil: encabezado arriba, texto abajo */
+    gap: 1.25rem;
+}
+
+.about-eyebrow {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--moonstone-color);
+    margin-bottom: 0.5rem;
+}
+
+.about-title {
     font-family: var(--font-primary);
-    font-size: 1.75rem;
-    color: var(--jet-card);
-    margin: 0 0 0.5rem 0;
-}
-
-.registro-number {
-    font-size: 1.25rem;
-    font-weight: bold;
-    color: var(--primary-color);
-    letter-spacing: 1px;
-    margin: 0.5rem 0;
-}
-
-.registro-text {
-    font-size: 0.95rem;
-    color: #555555;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    color: var(--text-light);
     margin: 0;
 }
 
-/* --- MEDIA QUERIES (Mejora Progresiva para Escritorio/Tabletas Grandes) --- */
+.about-text {
+    font-size: 1rem;
+    line-height: 1.75;
+    color: var(--text-light);
+    max-width: 68ch;
+    margin: 0;
+}
+
+/* Cierre con CTA */
+.about-cta-section {
+    border-top: 1px solid rgba(122, 166, 179, 0.25);
+    padding: 3rem 0 4.5rem;
+}
+
+/* CAMBIO (tamaño del botón): más contenido. Mobile-first: en móvil
+   0.9rem y padding 0.75rem 1.5rem; desde 768px 0.95rem y padding
+   0.85rem 1.75rem (ver @media abajo). Ancho automático según el
+   contenido (inline-block), nunca el 100% del contenedor; max-width
+   evita el scroll horizontal y, si en una pantalla muy estrecha el
+   texto tuviera que partirse, queda centrado y balanceado. */
+.about-cta,
+.about-cta:visited,
+.about-cta:active {
+    display: inline-block;
+    box-sizing: border-box;
+    max-width: 100%;
+    background-color: var(--primary-color);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    text-align: center;
+    text-wrap: balance;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.about-cta:focus-visible {
+    outline: 2px solid var(--text-light);
+    outline-offset: 3px;
+}
+
+/* --- Tablet (>= 768px): botón un poco más amplio --- */
+@media (min-width: 768px) {
+    .about-cta,
+    .about-cta:visited,
+    .about-cta:active {
+        font-size: 0.95rem;
+        padding: 0.85rem 1.75rem;
+    }
+}
+
+/* --- Tablet y escritorio (>= 900px) --- */
 @media (min-width: 900px) {
-    .nosotros-valores {
-        grid-template-columns: repeat(3, 1fr); /* 3 columnas para escritorio */
-        gap: 2rem;
+    .nosotros-hero {
+        padding: 5.5rem 0 2.5rem;
     }
 
-    .hero-card {
-        padding: 3rem 2.5rem; /* Padding amplio para escritorio */
-    }
-
-    .hero-card h1 {
-        font-size: 2.5rem; /* Fuente más grande para escritorio */
+    .nosotros-hero h1 {
+        font-size: 3.25rem;
     }
 
     .nosotros-description {
-        font-size: 1.1rem; /* Fuente adaptada para escritorio */
+        font-size: 1.2rem;
     }
 
-    .registro-card {
-        padding: 3rem 2rem; /* Padding amplio para escritorio */
+    .about-intro {
+        padding-bottom: 5rem;
+    }
+
+    .about-intro-text {
+        font-size: 1.15rem;
+    }
+
+    .about-block {
+        padding: 4rem 0;
+    }
+
+    /* Encabezado a la izquierda, texto a la derecha */
+    .about-block-inner {
+        grid-template-columns: 1fr 2fr;
+        gap: 3rem;
+        align-items: start;
+    }
+
+    .about-title {
+        font-size: 1.9rem;
+    }
+
+    .about-text {
+        font-size: 1.05rem;
+    }
+
+    .about-cta-section {
+        padding: 4rem 0 6rem;
+    }
+
+    /* El hover solo en escritorio, igual que en header.css */
+    .about-cta:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-1px);
     }
 }
 
@@ -230,12 +232,6 @@ body {
     opacity: 1;
     transform: translateY(0);
 }
-
-/* Entrada escalonada de las 3 tarjetas de "Nuestros Pilares", mismo
-   espíritu que la entrada escalonada de cards que ya tiene el
-   catálogo público. */
-.valor-card.reveal-on-scroll:nth-child(2) { transition-delay: 0.1s; }
-.valor-card.reveal-on-scroll:nth-child(3) { transition-delay: 0.2s; }
 
 @media (prefers-reduced-motion: reduce) {
     .reveal-on-scroll {

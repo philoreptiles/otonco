@@ -18,52 +18,60 @@ export async function renderNosotrosPage() {
     const main = document.getElementById('nosotros-app');
     if (!main) return;
     
+    /* CAMBIO: contenido editorial de "Sobre Otonco". Se sustituyen las
+       secciones anteriores (hero en tarjeta, "Nuestros Pilares" y la
+       tarjeta de registro con folio de ejemplo) por: hero + intro,
+       dos bloques con encabezado numerado y un cierre con CTA. */
     main.innerHTML = `
+        <!-- Hero: título de la página (único h1) y bajada -->
         <section class="nosotros-hero">
             <div class="section-container">
-                <div class="hero-card reveal-on-scroll">
-                    <span class="hero-subtitle">Criadero Especializado</span>
+                <div class="about-measure reveal-on-scroll">
                     <h1>Sobre Otonco</h1>
                     <p class="nosotros-description">
-                        Somos un criadero especializado en el género <strong>Boa</strong>, ubicado en Xalapa, Veracruz. 
-                        Con más de 10 años de experiencia, nos dedicamos a la reproducción ética y conservación de Boa sigma e imperator, 
-                        ofreciendo ejemplares de alta calidad genética y sanidad.
+                        Un proyecto dedicado a la conservación, la divulgación y la crianza responsable de reptiles en el sur de Veracruz.
                     </p>
                 </div>
             </div>
         </section>
 
-        <section class="nosotros-valores-section">
+        <!-- Introducción: sin encabezado propio para no repetir el h1 -->
+        <section class="about-intro" aria-label="Presentación">
             <div class="section-container">
-                <h2 class="section-title reveal-on-scroll">Nuestros Pilares</h2>
-                <div class="nosotros-valores">
-                    <div class="valor-card reveal-on-scroll">
-                        <div class="valor-icon"><i class="fa-solid fa-dna"></i></div>
-                        <h3>Calidad genética</h3>
-                        <p>Trabajamos con líneas genéticas seleccionadas para garantizar ejemplares sanos y con características excepcionales.</p>
-                    </div>
-
-                    <div class="valor-card reveal-on-scroll">
-                        <div class="valor-icon"><i class="fa-solid fa-leaf"></i></div>
-                        <h3>Ética y conservación</h3>
-                        <p>Nuestro compromiso es con el bienestar animal y la conservación de la especie, siguiendo los más altos estándares éticos.</p>
-                    </div>
-
-                    <div class="valor-card reveal-on-scroll">
-                        <div class="valor-icon"><i class="fa-solid fa-handshake"></i></div>
-                        <h3>Confianza y profesionalismo</h3>
-                        <p>Contamos con registro ante SEMARNAT y ofrecemos asesoría especializada a nuestros clientes.</p>
-                    </div>
-                </div>
+                <p class="about-intro-text about-measure reveal-on-scroll">
+                    Otonco es un proyecto dedicado a la conservación, la divulgación y la crianza responsable de reptiles en el sur de Veracruz. Nace de una visión que integra la herpetología, la biología y el estudio de la relación entre las personas y la fauna silvestre, entendiendo a las serpientes como parte vital de la naturaleza y de la memoria cultural de la región.
+                </p>
             </div>
         </section>
 
-        <section class="nosotros-registro-section">
-            <div class="registro-card reveal-on-scroll">
-                <div class="registro-badge"><i class="fa-solid fa-shield-halved"></i></div>
-                <h2>Unidad de Manejo Autorizada</h2>
-                <p class="registro-number">SEMARNAT-PIMVS-IN-0000-VER</p>
-                <p class="registro-text">Criadero registrado ante la Secretaría de Medio Ambiente y Recursos Naturales</p>
+        <!-- Bloque ¿Qué hacemos? -->
+        <section class="about-block" aria-labelledby="about-que-hacemos">
+            <div class="section-container about-block-inner reveal-on-scroll">
+                <div class="about-head">
+                    <h2 class="about-title" id="about-que-hacemos">¿Qué hacemos?</h2>
+                </div>
+                <p class="about-text">
+                    Combinamos la crianza selectiva y regularizada de boas en un entorno de selva con actividades de capacitación comunitaria —talleres escolares sobre prevención de mordeduras y atención de la ofidiotoxicosis— y la colaboración continua con investigadores en el monitoreo de la biodiversidad local.
+                </p>
+            </div>
+        </section>
+
+        <!-- Bloque Nuestra trayectoria -->
+        <section class="about-block" aria-labelledby="about-trayectoria">
+            <div class="section-container about-block-inner reveal-on-scroll">
+                <div class="about-head">
+                    <h2 class="about-title" id="about-trayectoria">Nuestra trayectoria</h2>
+                </div>
+                <p class="about-text">
+                    Con más de una década de trabajo en divulgación ambiental y gestión social, integramos conocimiento técnico, trabajo de campo y respeto por la vida silvestre. Cada ejemplar se cría con ética y dedicación, bajo criterios de bienestar animal y cumplimiento normativo.
+                </p>
+            </div>
+        </section>
+
+        <!-- Cierre con CTA hacia el catálogo -->
+        <section class="about-cta-section">
+            <div class="section-container reveal-on-scroll">
+                <a href="/index.html" class="about-cta">Conoce nuestros ejemplares disponibles →</a>
             </div>
         </section>
     `;

@@ -16,13 +16,18 @@
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start; /* CAMBIO: en movil todo a la izquierda */
     gap: 1.25rem;
 }
 
+/* CAMBIO: en movil el grupo (enlaces + icono) arranca en el borde
+   izquierdo del contenedor; flex-wrap evita scroll horizontal si en
+   una pantalla muy estrecha no cupiera en una sola linea. */
 .footer-nav {
     display: flex;
-    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1.5rem;
     align-items: center;
 }
 
@@ -34,19 +39,60 @@
     transition: color 0.2s ease;
 }
 
+/* CAMBIO: icono de Facebook con otro estilo. Antes era un SVG de
+   contorno; ahora es una "f" SOLIDA (fill) dentro de un circulo de
+   fondo sutil que dibuja el propio enlace (40px, area tactil comoda).
+   Mismo color que .footer-link; el hover (solo escritorio, abajo)
+   lo pasa al acento rojo y aumenta el fondo. */
+.footer-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.08);
+    color: var(--moonstone-color);
+    transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.footer-social svg {
+    display: block;
+}
+
+.footer-social:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
 .footer-copyright {
     color: #8a99a8;
     font-size: 0.85rem;
     margin: 0;
-    text-align: center;
+    text-align: left; /* CAMBIO: a la izquierda en movil, junto al grupo */
 }
 
 @media (min-width: 768px) {
-    .footer-nav {
-        gap: 1.75rem;
+    /* Escritorio: se mantiene el centrado de antes */
+    .footer-container {
+        align-items: center;
     }
 
-    .footer-link:hover {
+    .footer-nav {
+        justify-content: center;
+        gap: 2rem;
+    }
+
+    .footer-copyright {
+        text-align: center;
+    }
+
+    .footer-link:hover,
+    .footer-social:hover {
         color: var(--primary-color);
+    }
+
+    .footer-social:hover {
+        background-color: color-mix(in srgb, var(--primary-color) 18%, transparent);
     }
 }

@@ -22,7 +22,7 @@ export async function renderHeader(containerId) {
             <div class="header-container">
                 <a href="index.html" class="logo-link" aria-label="Otonco PIMVS">
                     <img src="./img/otonco.png" alt="Otonco" class="logo-img">
-                    <span class="logo-text">Otonco PIMVS</span>
+                    <span class="logo-text">Otonco</span>
                 </a>
                 <nav class="header-nav">
                     <a href="/index.html" class="nav-btn">Ejemplares</a>
