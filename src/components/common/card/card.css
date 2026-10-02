@@ -86,7 +86,10 @@
     right: 4px;
     z-index: 10 !important;
     padding: 0.15rem 0.4rem;
-    border-radius: 8px;
+    /* CAMBIO: 8px -> 4px. El badge es diminuto (~14px de alto) y a 8px
+       quedaba como pastilla completa; 4px = 8px de la ficha menos los
+       4px de separación al borde, o sea esquinas concéntricas. */
+    border-radius: 4px;
     font-size: 0.5rem;
     font-weight: 700;
     letter-spacing: 0.5px;
@@ -194,7 +197,8 @@
 /* --- Tablet y escritorio (>= 768px) --- */
 @media (min-width: 768px) {
     .card {
-        border-radius: 12px;
+        /* CAMBIO: 12px -> 8px (en móvil ya era 8px), igual que la barra de filtros */
+        border-radius: 8px;
     }
 
     .card:hover {

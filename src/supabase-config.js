@@ -112,8 +112,28 @@ export async function getEjemplares(filters = {}) {
         .from('ejemplares')
         .select('*')
         .eq('visible_publico', true)
-        .eq('criador_id', siteConfig.criadorId)
-        .order('created_at', { ascending: false });
+        .eq('criador_id', siteConfig.criadorId);
+
+    // CAMBIO (ordenamiento por precio): antes esta consulta SIEMPRE ordenaba
+    // por created_at y nunca leía filters.orden, que es lo que envía el chip
+    // "Ordenar" de filters.js ('precio-asc' | 'precio-desc' | ''). Por eso
+    // las fichas no cambiaban de orden. El orden se hace AQUÍ, en la base de
+    // datos (no en el DOM), porque el catálogo está paginado con .range():
+    // ordenar solo las fichas ya cargadas daría un orden falso entre páginas.
+    // - precio es numérico en la base, así que el orden es numérico (no el
+    //   lexicográfico de un texto como "$3,500.00").
+    // - nullsFirst: false deja al final los ejemplares sin precio.
+    // - created_at e id desempatan para que las páginas sean estables.
+    // - orden vacío ('') = orden original (más recientes primero).
+    if (filters.orden === 'precio-asc' || filters.orden === 'precio-desc') {
+        query = query.order('precio', {
+            ascending: filters.orden === 'precio-asc',
+            nullsFirst: false
+        });
+    }
+    query = query
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false });
 
     if (filters.genetica && filters.genetica.trim() !== '') {
         query = query.ilike('genetica', `%${filters.genetica.trim()}%`);

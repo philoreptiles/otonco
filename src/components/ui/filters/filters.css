@@ -1,129 +1,305 @@
 /* ============================================================
-   METODOLOGÍA MOBILE-FIRST
-   Base = móvil (< 768px): panel compacto, semitransparente con
-   blur, 2 columnas de filtros. Un solo @media (min-width: 768px)
-   amplía a panel sólido, rejilla flexible y acciones en fila.
-   No existen @media (max-width: ...) en este archivo.
+   FILTROS — buscador + barra de "pills" (estilo Nike)
+   ------------------------------------------------------------
+   METODOLOGÍA MOBILE-FIRST: la base es móvil (< 768px) y un solo
+   @media (min-width: 768px) al final ajusta el escritorio. No existen
+   @media (max-width: ...) en este archivo.
+
+   CAMBIO: antes #filters-root era el elemento sticky (un panel con
+   selects en cuadrícula). Ahora el sticky es .filters-bar, y para que
+   pueda "pegarse" mientras se recorre TODO el catálogo debe ser hijo
+   directo de .main-container (un sticky solo se mueve dentro de su
+   contenedor). Por eso #filters-root pasa a display: contents: deja de
+   generar caja propia y el buscador y la barra se comportan como hijos
+   directos de <main>.
+
+   El header NO es sticky (position: relative), así que la barra se pega
+   en top: 0, no debajo del header.
+
+   CAMBIOS (ajustes de diseño):
+   1. Esquinas de 8px en la barra y en los chips (antes pastillas de
+      9999px), igual que el buscador, el hero y las fichas del catálogo.
+   2. El <select> nativo usa el acento del sitio (accent-color), sin el
+      destello azul del toque en móvil, con el desplegable en oscuro.
+   3. "Aplicar" sale de la pista con scroll y queda fijo a la derecha de
+      la barra: siempre visible, sin tener que desplazarse hasta el
+      final. Un degradado en el borde derecho de la pista avisa de que
+      hay más chips por deslizar (ver .has-more).
+
+   CAMBIO (posición de "Limpiar todo"): vuelve a ser el primer chip de
+   la pista, a la izquierda. Orden de lectura: Limpiar todo (solo con
+   filtros activos), Disponibilidad, Sexo, Año, Ordenar | Aplicar (fijo).
+   El cambio de posición está en el markup de filters.js; aquí solo se
+   ajusta el comentario y el ancla de scroll-snap del chip.
    ============================================================ */
 #filters-root {
+    display: contents;
+}
+
+/* ---------- Buscador (arriba, separado de la barra) ---------- */
+.filters-search {
+    margin: 1rem 0 0.75rem;
+}
+
+.filters-search input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: var(--text-light, #F4F5F5);
+    font-family: inherit;
+    /* 16px: evita el zoom automático de iOS Safari al enfocar el campo */
+    font-size: 1rem;
+    line-height: 1.3;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filters-search input::placeholder {
+    color: rgba(244, 245, 245, 0.5);
+}
+
+.filters-search input:focus {
+    border-color: var(--primary-color, #EE6C29);
+    box-shadow: 0 0 0 1px var(--primary-color, #EE6C29);
+}
+
+/* ---------- Barra de filtros (sticky) ---------- */
+/* CAMBIO: fila flex [ pista con scroll | Aplicar ]. El borde pasa de
+   "solo abajo" a caja completa porque con esquinas redondeadas un
+   border-bottom se curvaría de forma rara en las puntas. */
+.filters-bar {
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: rgba(40, 43, 43, 0.9);
-    backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--moonstone-color, #7AA6B3);
-    box-shadow: var(--shadow-sticky, 0 4px 12px rgba(0,0,0,0.4));
-    margin-bottom: 0.5rem;
-    width: 100%;
-    transition: background-color 0.3s ease;
-}
-
-.filters-panel {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0.4rem 0.6rem;
-}
-
-.filters-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.3rem;
-    align-items: end;
-}
-
-.filter-group {
     display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: rgba(10, 10, 10, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    /* el scroll horizontal lo maneja .filters-track, no la barra */
+    overflow: hidden;
 }
 
-.filter-group label {
-    font-size: 0.65rem;
-    line-height: 1;
+/* Pista con scroll horizontal, sin barra de desplazamiento visible */
+.filters-track {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    /* sin min-width: 0 un hijo flex no puede encogerse por debajo de su
+       contenido y la pista nunca llegaría a hacer scroll */
+    min-width: 0;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x proximity;
+    /* 3px de aire (compensados con el margen negativo) para que el
+       contorno de foco de los chips de los extremos no se corte, porque
+       overflow-x: auto también recorta en vertical. */
+    padding: 3px 3px 0.25rem;
+    margin: -3px -3px 0;
+    scroll-padding-inline: 3px;
+}
+
+.filters-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* Degradado en el borde derecho de la pista: filters.js agrega
+   .has-more a la barra SOLO mientras queden chips ocultos a la derecha,
+   así que al llegar al final del scroll el último chip se ve completo.
+   Se hace con máscara (no con un color encima) para no depender del
+   fondo translúcido de la barra. */
+.filters-bar.has-more .filters-track {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+/* ---------- Chips (pills) ---------- */
+.filter-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    min-height: 2.25rem;
+    padding: 0.5rem 0.9rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    /* CAMBIO: 9999px (pastilla) -> 8px, como el resto de componentes */
+    border-radius: 8px;
+    color: var(--text-light, #F4F5F5);
+    font-family: inherit;
+    /* quita el destello azul/gris que Android dibuja al tocar */
+    -webkit-tap-highlight-color: transparent;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--moonstone-color, #7AA6B3);
+    line-height: 1.2;
+    white-space: nowrap;
+    scroll-snap-align: start;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease,
+                color 0.2s ease, transform 0.2s ease, filter 0.2s ease;
 }
 
-.filter-group input,
-.filter-group select {
-    padding: 0.2rem 0.4rem;
+.filter-chip:active {
+    transform: scale(0.97);
+}
+
+.filter-chip:focus-visible {
+    outline: 2px solid var(--primary-color, #EE6C29);
+    outline-offset: 2px;
+}
+
+/* Chip con valor seleccionado: borde y tinte de acento. El texto se
+   queda claro para mantener el contraste sobre el fondo teñido. */
+.filter-chip.is-active {
+    border-color: var(--primary-color, #EE6C29);
+    background-color: rgba(255, 255, 255, 0.08); /* respaldo sin color-mix */
+    background-color: color-mix(in srgb, var(--primary-color, #EE6C29) 12%, transparent);
+    color: #ffffff;
+}
+
+/* ---------- Chips con <select> ----------
+   El <select> ocupa TODO el pill (el chip no lleva padding propio, el
+   padding lo lleva el select), así que un clic en cualquier punto del
+   pill abre el desplegable nativo sin necesitar JS. El padding derecho
+   deja sitio a la flecha, que va encima y no recibe clics. */
+.filter-chip--select {
+    padding: 0;
+}
+
+.filter-chip--select select {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0.5rem 2.1rem 0.5rem 0.9rem;
+    min-height: calc(2.25rem - 2px);
+    background: transparent;
+    color: inherit;
+    border: none;
+    border-radius: inherit;
+    font: inherit;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    /* CAMBIO: color del select nativo. accent-color tiñe con el acento
+       del sitio lo que el navegador permita; color-scheme: dark hace
+       que el desplegable use el tema oscuro del sistema en vez del
+       claro. El resaltado de la opción bajo el cursor lo dibuja el
+       sistema operativo y algunos navegadores lo mantienen azul: ver
+       la nota de abajo. */
+    accent-color: var(--primary-color, #EE6C29);
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.filter-chip--select select:focus {
+    outline: none;
+}
+
+.filter-chip--select select:focus-visible {
+    outline: 2px solid var(--primary-color, #EE6C29);
+    outline-offset: 2px;
+}
+
+/* El desplegable nativo hereda el color claro del chip; se fija el fondo
+   para que las opciones sean legibles en todos los navegadores.
+   La opción ya elegida se pinta con el acento donde el navegador deja
+   (p. ej. Firefox); el resaltado al pasar el cursor/teclado depende del
+   sistema y no se puede forzar con CSS en todos los navegadores. */
+.filter-chip--select option {
     background-color: var(--jet-dark, #1E2020);
     color: var(--text-light, #F4F5F5);
-    border: 1px solid var(--border-color, #3D4242);
-    border-radius: 4px;
-    font-size: 0.72rem;
-    height: 26px;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border-color 0.2s ease;
 }
 
-.filter-group input:focus,
-.filter-group select:focus {
-    border-color: var(--primary-color, #EE6C29);
-}
-
-.filters-actions {
-    grid-column: span 2;
-    display: flex;
-    gap: 0.3rem;
-    margin-top: 0.1rem;
-}
-
-.btn-apply {
+.filter-chip--select option:checked {
     background-color: var(--primary-color, #EE6C29);
     color: #ffffff;
-    border: none;
-    padding: 0.2rem 0.4rem;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 0.72rem;
-    height: 26px;
-    line-height: 1;
-    cursor: pointer;
-    flex: 1;
 }
 
-.btn-clear {
+.filter-chip__chevron {
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    opacity: 0.75;
+}
+
+/* ---------- Chip "Limpiar todo" ---------- */
+/* CAMBIO: primer chip de la pista (izquierda); se ancla al inicio. */
+.filter-chip--clear {
+    display: none;
+    scroll-snap-align: start;
     background-color: transparent;
-    color: var(--text-light, #F4F5F5);
-    border: 1px solid var(--border-color, #3D4242);
-    padding: 0.2rem 0.4rem;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.72rem;
-    height: 26px;
-    line-height: 1;
-    cursor: pointer;
-    flex: 1;
+    color: rgba(244, 245, 245, 0.65);
 }
 
+.filter-chip--clear.is-visible {
+    display: inline-flex;
+}
+
+/* ---------- Chip "Aplicar" ----------
+   CAMBIO: ya no está dentro de .filters-track sino a su lado, como hijo
+   directo de .filters-bar, así que no se mueve con el scroll y siempre
+   queda a la vista y al alcance del dedo. */
+.filter-chip--apply {
+    flex: 0 0 auto;
+    background-color: var(--primary-color, #EE6C29);
+    border-color: var(--primary-color, #EE6C29);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* ---------- Botón flotante "Volver arriba" ----------
+   Esquina inferior derecha, ENCIMA del botón flotante de WhatsApp
+   (56px, a 1.25rem del borde) para que no se pisen: 44px de ancho
+   centrados sobre la misma columna y 0.75rem de separación. z-index
+   justo por debajo del de WhatsApp (999) y muy por debajo del modal. */
 .btn-scroll-top {
-    grid-column: span 2;
-    background-color: var(--moonstone-color, #7AA6B3);
-    color: var(--jet-color, #282B2B);
-    border: none;
-    padding: 0.2rem 0.4rem;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 0.68rem;
-    height: 24px;
+    position: fixed;
+    right: calc(1.25rem + 6px);
+    bottom: calc(1.25rem + 56px + 0.75rem);
+    z-index: 998;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
-    white-space: nowrap;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background-color: rgba(10, 10, 10, 0.85);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    color: var(--text-light, #F4F5F5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateY(6px);
-    transition: all 0.3s ease;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease,
+                visibility 0.3s ease, border-color 0.2s ease;
 }
 
 .btn-scroll-top .btn-icon {
-    width: 0.9em;
-    height: 0.9em;
+    width: 1.25rem;
+    height: 1.25rem;
     flex-shrink: 0;
 }
 
@@ -134,58 +310,68 @@
     transform: translateY(0);
 }
 
+.btn-scroll-top:focus-visible {
+    outline: 2px solid var(--primary-color, #EE6C29);
+    outline-offset: 2px;
+}
+
+/* Hover solo con puntero real: en pantallas táctiles se queda "pegado" */
+@media (hover: hover) {
+    .filter-chip:hover {
+        border-color: rgba(255, 255, 255, 0.35);
+        background-color: rgba(255, 255, 255, 0.09);
+    }
+
+    .filter-chip.is-active:hover {
+        border-color: var(--primary-color, #EE6C29);
+    }
+
+    .filter-chip--clear:hover {
+        color: var(--primary-color, #EE6C29);
+        border-color: var(--primary-color, #EE6C29);
+        background-color: transparent;
+    }
+
+    .filter-chip--apply:hover {
+        background-color: var(--primary-color, #EE6C29);
+        border-color: var(--primary-color, #EE6C29);
+        filter: brightness(1.12);
+    }
+
+    .btn-scroll-top:hover {
+        border-color: var(--primary-color, #EE6C29);
+    }
+}
+
 /* --- Tablet y escritorio (>= 768px) --- */
 @media (min-width: 768px) {
-    #filters-root {
-        background-color: var(--jet-color, #282B2B);
-        backdrop-filter: none;
-        margin-bottom: 1.5rem;
+    .filters-search {
+        margin: 1.25rem 0 1rem;
     }
 
-    .filters-panel {
+    /* Barra centrada con tope de 1200px; con espacio de sobra los chips
+       caben sin necesidad de scroll. */
+    .filters-bar {
+        max-width: 1200px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 1.25rem;
         padding: 0.85rem 1rem;
     }
+}
 
-    .filters-grid {
-        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-        gap: 0.75rem;
+@media (prefers-reduced-motion: reduce) {
+    .filters-search input,
+    .filter-chip,
+    .btn-scroll-top {
+        transition: none;
     }
 
-    .filter-group {
-        gap: 0.25rem;
-    }
-
-    .filter-group label {
-        font-size: 0.8rem;
-        line-height: normal;
-    }
-
-    .filter-group input,
-    .filter-group select {
-        padding: 0.45rem 0.6rem;
-        font-size: 0.85rem;
-        height: auto;
-        border-radius: 6px;
-    }
-
-    .filters-actions {
-        grid-column: auto;
-        gap: 0.4rem;
-        margin-top: 0;
-    }
-
-    .btn-apply,
-    .btn-clear {
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-        height: auto;
-        line-height: normal;
+    .filter-chip:active {
+        transform: none;
     }
 
     .btn-scroll-top {
-        grid-column: auto;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
-        height: auto;
+        transform: none;
     }
 }
