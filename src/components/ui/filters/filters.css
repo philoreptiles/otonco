@@ -31,6 +31,12 @@
    filtros activos), Disponibilidad, Sexo, Año, Ordenar | Aplicar (fijo).
    El cambio de posición está en el markup de filters.js; aquí solo se
    ajusta el comentario y el ancla de scroll-snap del chip.
+
+   CAMBIO (menú desplegable de los <select>): el menú abierto ya no se ve
+   más grande y claro que el pill. Respaldo: opciones con la misma fuente
+   y tamaño que el pill sobre fondo oscuro. Mejora progresiva: donde hay
+   soporte, appearance: base-select estiliza el menú (tema oscuro, 8px de
+   esquinas, mismo tamaño de letra). Ver "Desplegable propio".
    ============================================================ */
 #filters-root {
     display: contents;
@@ -219,7 +225,18 @@
    La opción ya elegida se pinta con el acento donde el navegador deja
    (p. ej. Firefox); el resaltado al pasar el cursor/teclado depende del
    sistema y no se puede forzar con CSS en todos los navegadores. */
+/* CAMBIO (dropdown coherente con el pill): base de respaldo para los
+   navegadores donde el desplegable lo dibuja el sistema (Firefox y
+   Safari anteriores, Chrome antiguo). Se fijan fuente, tamaño y fondo
+   oscuro de forma explícita para que las opciones no hereden un tamaño
+   de sistema mayor que el del pill. El tamaño exterior y las esquinas
+   del menú nativo NO se pueden cambiar con CSS: eso lo resuelve el
+   bloque @supports (appearance: base-select) de más abajo. */
 .filter-chip--select option {
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.2;
     background-color: var(--jet-dark, #1E2020);
     color: var(--text-light, #F4F5F5);
 }
@@ -238,6 +255,82 @@
     transform: translateY(-50%);
     pointer-events: none;
     opacity: 0.75;
+}
+
+/* ---------- Desplegable propio (mejora progresiva) ----------
+   CAMBIO: en navegadores con "select personalizable" (Chrome/Edge y
+   Safari recientes) appearance: base-select deja estilizar el menú
+   abierto (::picker(select)) sin JS y sin perder el <select> nativo
+   (teclado, lectores de pantalla, valor y eventos change iguales).
+   Así el menú usa el mismo tema oscuro, la misma fuente y las mismas
+   esquinas de 8px que los pills. Donde no hay soporte, este bloque se
+   ignora por completo y queda el respaldo de arriba. Las variables son
+   las del proyecto (--jet-dark, --text-light, --primary-color). */
+@supports (appearance: base-select) {
+    .filter-chip--select select,
+    .filter-chip--select select::picker(select) {
+        appearance: base-select;
+    }
+
+    /* El pill ya dibuja su propia flecha (.filter-chip__chevron) */
+    .filter-chip--select select::picker-icon {
+        display: none;
+    }
+
+    /* La flecha gira mientras el menú está abierto */
+    .filter-chip__chevron {
+        transition: transform 0.2s ease;
+    }
+
+    .filter-chip--select:has(select:open) .filter-chip__chevron {
+        transform: translateY(-50%) rotate(180deg);
+    }
+
+    /* El menú abierto */
+    .filter-chip--select select::picker(select) {
+        box-sizing: border-box;
+        margin-block: 0.35rem;
+        padding: 0.3rem;
+        max-height: min(20rem, 60vh);
+        background-color: var(--jet-dark, #1E2020);
+        color: var(--text-light, #F4F5F5);
+        color-scheme: dark;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        font-family: inherit;
+        font-size: 0.85rem;
+        font-weight: 500;
+        line-height: 1.2;
+    }
+
+    /* Opciones: mismo tamaño de letra que el pill y alto cómodo al tacto */
+    .filter-chip--select option {
+        display: flex;
+        align-items: center;
+        padding: 0.55rem 0.75rem;
+        background-color: transparent;
+        border-radius: 6px;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+    .filter-chip--select option:hover,
+    .filter-chip--select option:focus {
+        background-color: rgba(255, 255, 255, 0.09);
+    }
+
+    /* La opción elegida se marca con un tinte del acento (sin la palomita
+       por defecto) */
+    .filter-chip--select option:checked {
+        background-color: rgba(255, 255, 255, 0.08); /* respaldo sin color-mix */
+        background-color: color-mix(in srgb, var(--primary-color, #EE6C29) 18%, transparent);
+        color: #ffffff;
+    }
+
+    .filter-chip--select option::checkmark {
+        display: none;
+    }
 }
 
 /* ---------- Chip "Limpiar todo" ---------- */
